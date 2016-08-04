@@ -2,6 +2,7 @@ import random
 import string
 
 from pymockdata.data.names import female_names
+from pymockdata.consts import Fields
 from pymockdata.base import BaseGenerator
 
 
@@ -12,13 +13,10 @@ class FemaleNameGenerator(BaseGenerator):
         (2, "{}-{}")
     ]
 
+    ID = Fields.FEMALE_NAME
+
     def generate(self):
         items, templ = random.choice(self.templates)
-        templ_args = [random.choice(female_names) for i in range(items)]
+        templ_args = [random.choice(female_names) for _ in range(items)]
         return templ.format(*templ_args)
 
-
-if __name__ == '__main__':
-    gen = FemaleNameGenerator()
-    for _ in range(10):
-        print(gen.generate())
