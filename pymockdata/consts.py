@@ -1,7 +1,4 @@
-
-
 class Fields:
-
     # names
     FEMALE_NAME = "female_name"
     MALE_NAME = "male_name"
@@ -21,7 +18,10 @@ class Fields:
     JOB = "job"
 
     # computers and internet
+    IPV4_ADDRESS_PRIVATE = "ipv4_addr_priv"
+    IPV4_ADDRESS_PUBLIC = "ipv4_addr_publ"
     IPV4_ADDRESS = "ipv4_addr"
+
     IPV6_ADDRESS = "ipv6_addr"
     MAC_ADDRESS = "mac_addr"
     WEBSITE = "website"
@@ -51,14 +51,8 @@ class Fields:
 
 
 class Output:
-
-    DATABASE = 1    # directly for inserting data into database
-    XML = 2         # exporting as XML
-    CSV = 3         # exporting as CSV
-    JSON = 4        # exporting as JSON
-    TEMPLATE = 5    # exporting to custom, defined in the template
-
-
-
-
-
+    DATABASE = 1  # directly for inserting data into database
+    XML = 2  # exporting as XML
+    CSV = 3  # exporting as CSV
+    JSON = 4  # exporting as JSON
+    TEMPLATE = 5  # exporting to custom, defined in the template

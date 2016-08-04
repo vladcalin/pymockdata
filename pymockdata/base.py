@@ -3,6 +3,9 @@ import random
 
 
 class BaseGenerator(abc.ABC):
+    def set_seed(self, seed):
+        random.seed(seed)
+
     @abc.abstractmethod
     def generate(self):
         pass

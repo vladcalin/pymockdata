@@ -13,18 +13,15 @@ def get_generator_for_datatype(data_type):
     raise ValueError("No generator found for {}".format(data_type))
 
 
-def generate_data(data_type, instances=1):
+def generate_data(data_type, instances=1, seed=None):
+    generator = get_generator_for_datatype(data_type)
+    if seed:
+        generator.set_seed(seed)
     if instances == 1:
-        return get_generator_for_datatype(data_type).generate()
+        return generator.generate()
     elif instances > 1:
         items = []
-        generator = get_generator_for_datatype(data_type)
         for item in range(instances):
             items.append(generator.generate())
         return items
     raise ValueError("instances must be a positive integer")
-
-
-if __name__ == '__main__':
-    from pymockdata.consts import Fields
-    print(generate_data(Fields.FEMALE_NAME, instances=10))
