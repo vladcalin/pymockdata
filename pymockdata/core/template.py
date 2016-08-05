@@ -2,7 +2,7 @@ import random
 import string
 
 import pymockdata.data as mockdata
-from pymockdata.engine import _load_generators
+from pymockdata.mockdataengine import _load_generators
 
 class TokenParsingError(Exception):
     pass

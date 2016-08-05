@@ -29,12 +29,15 @@ def _load_generators():
 
 
 class MockDataEngine:
+    def __init__(self, seed=None):
+        self._seed = seed
+
     def __getattribute__(self, item):
         gen = [generator for generator in _load_generators() if generator.ID == item]
         if gen:
-            return gen[0]().generate()
-        raise AttributeError("Object {} has no attribute {}".format(self.__class__, item))
+            return gen[0]().generate(seed=self._seed)
+        return super(MockDataEngine, self).__getattribute__(item)
 
 
 if __name__ == '__main__':
-    print(MockDataEngine().male_name)
+    print(MockDataEngine(11).male_name)
