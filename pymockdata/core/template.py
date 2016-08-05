@@ -54,15 +54,22 @@ class Token:
     def LITERAL(cls, str_literal):
         return cls._TOKEN_ID_LITERAL, str_literal
 
+    @classmethod
+    def RANDOM_SYMBOL(cls, symbol_set):
+        return cls._TOKEN_ID_SYMBOL, symbol_set
+
     class Repeat:
         """
         Causes the designated token to repeat multiple times
 
         Example: (Token.Repeat(Token.DIGIT, 3)) is equivalent to (Token.DIGIT, Token.DIGIT, Token.DIGIT)
         """
-        def __init__(self, token, repeat=1):
+        def __init__(self, token, repeat=1, random_repeat=None):
             self._token = token
-            self._repeat = repeat
+            if random_repeat:
+                self._repeat = random.randint(random_repeat[0], random_repeat[1])
+            else:
+                self._repeat = repeat
 
         def get(self):
             return [self._token for _ in range(self._repeat)]
@@ -78,6 +85,13 @@ class Token:
                 return generator[0]().generate()
 
             raise TokenParsingError("No suitable generator found for ID={}".format(self._generator_id))
+
+
+class TokenTemplate:
+
+    def __init__(self, token, template=lambda x: x):
+        self._token = token
+        self._template = template
 
 
 class Template:

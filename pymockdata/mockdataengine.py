@@ -19,7 +19,7 @@ def _load_generators():
         if not gen_file.endswith("generator.py"):
             continue
 
-        gen_module = importlib.import_module("pymockdata.generators." + gen_file.strip(".py"))
+        gen_module = importlib.import_module("pymockdata.generators." + gen_file.rstrip(".py"))
         for item_name in dir(gen_module):
             item = getattr(gen_module, item_name)
             if inspect.isclass(item) and not inspect.isabstract(item) and issubclass(item, BaseGenerator):
@@ -40,4 +40,4 @@ class MockDataEngine:
 
 
 if __name__ == '__main__':
-    print(MockDataEngine(11).male_name)
+    print(MockDataEngine().forum_username)
