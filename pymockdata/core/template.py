@@ -54,6 +54,24 @@ class Token:
     def LITERAL(cls, str_literal):
         return cls._TOKEN_ID_LITERAL, str_literal
 
+    class Repeat:
+        """
+        Causes the designated token to repeat multiple times
+
+        Example: (Token.Repeat(Token.DIGIT, 3)) is equivalent to (Token.DIGIT, Token.DIGIT, Token.DIGIT)
+        """
+        def __init__(self, token, repeat=1):
+            self._token = token
+            self._repeat = repeat
+
+        def get(self):
+            return [self._token for _ in range(self._repeat)]
+
+    class Generator:
+        # TODO: implement this
+        def __init__(self, generator_class_name):
+            self._class_name = generator_class_name
+
 
 class Template:
     def __init__(self, *tokens):
@@ -65,6 +83,10 @@ class Template:
 
         parsed_tokens = []
         for token in self._tokens:
+            if isinstance(token, Token.Repeat):
+                for subtoken in token.get():
+                    parsed_tokens.append(self._resolve_token(subtoken))
+                continue
             parsed_tokens.append(self._resolve_token(token))
 
         return "".join(parsed_tokens)
@@ -126,11 +148,6 @@ if __name__ == '__main__':
     # Saniyah M. Harding
     # etc.
     t = Template(
-        Token.VALUE(mockdata.FEMALE_NAME),
-        Token.SPACE,
-        Token.LETTER_UPPER,
-        Token.DOT,
-        Token.SPACE,
-        Token.VALUE(mockdata.LAST_NAME)
+        Token.Repeat(Token.LETTER_LOWER, 10)
     )
     print(t.render())

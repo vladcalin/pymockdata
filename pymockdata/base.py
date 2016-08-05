@@ -3,15 +3,24 @@ import random
 
 
 class BaseGenerator(abc.ABC):
-    def set_seed(self, seed):
-        random.seed(seed)
 
-    @abc.abstractmethod
-    def generate(self):
+    @abc.abstractproperty
+    def _templates(self):
         pass
 
+    def generate(self, seed=None):
+        if seed:
+            random.seed(seed)
+            return random.choice(self._templates).render(seed=seed)
+        return random.choice(self._templates).render()
 
-class BaseExporter(abc.ABC):
+
+
+class BaseExporter():
+    @abc.abstractproperty
+    def _templates(self):
+        pass
+
     @abc.abstractmethod
     def set_data(self, data):
         pass
@@ -19,3 +28,4 @@ class BaseExporter(abc.ABC):
     @abc.abstractmethod
     def export(self):
         pass
+
