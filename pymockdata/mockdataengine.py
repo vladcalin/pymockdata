@@ -26,3 +26,15 @@ def _load_generators():
                 generators.append(item)
     _ALL_GENERATORS = generators
     return generators
+
+
+class MockDataEngine:
+    def __getattribute__(self, item):
+        gen = [generator for generator in _load_generators() if generator.ID == item]
+        if gen:
+            return gen[0]().generate()
+        raise AttributeError("Object {} has no attribute {}".format(self.__class__, item))
+
+
+if __name__ == '__main__':
+    print(MockDataEngine().male_name)
