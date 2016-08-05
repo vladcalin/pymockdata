@@ -34,6 +34,7 @@ class Token:
     _TOKEN_ID_INTERVAL = 5
     _TOKEN_ID_LITERAL = 6
     _TOKEN_ID_SPACE = 7
+    _TOKEN_ID_CUSTOM = 8
 
     DIGIT = (_TOKEN_ID_DIGIT, None)
     LETTER_LOWER = (_TOKEN_ID_LETTER, "lower")
@@ -58,6 +59,10 @@ class Token:
     @classmethod
     def RANDOM_SYMBOL(cls, symbol_set):
         return cls._TOKEN_ID_SYMBOL, symbol_set
+
+    @classmethod
+    def CUSTOM(cls, custom_func, args=None, kwargs=None):
+        return cls._TOKEN_ID_CUSTOM, (custom_func, args, kwargs)
 
     class Repeat:
         """
@@ -186,6 +191,15 @@ class Template:
     def _token_space_resolver(self, token_data):
         return " "
 
+    def _token_custom_resolver(self, token_data):
+        func, args, kwargs = token_data
+        if not args:
+            args = []
+        if not kwargs:
+            kwargs = {}
+
+        return func(*args, **kwargs)
+
     _token_resolvers = {
         Token._TOKEN_ID_DIGIT: _token_digit_resolver,
         Token._TOKEN_ID_LETTER: _token_letter_resolver,
@@ -195,6 +209,7 @@ class Template:
         Token._TOKEN_ID_INTERVAL: _token_interval_resolver,
         Token._TOKEN_ID_LITERAL: _token_literal_resolver,
         Token._TOKEN_ID_SPACE: _token_space_resolver,
+        Token._TOKEN_ID_CUSTOM: _token_custom_resolver,
     }
 
 

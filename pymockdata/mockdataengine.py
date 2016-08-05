@@ -37,6 +37,35 @@ def _get_generator(generator_id):
 
 
 class MockDataEngine:
+    """
+    Main class for generating mock data. Data is randomly generated when a specific member is accessed.
+    The following members are used for generating mock data:
+
+    Names:
+
+    MockDataEngine.male_name
+    MockDataEngine.female_name
+    MockDataEngine.last_name
+    MockDataEngine.full_male_name
+    MockDataEngine.full_female_name
+    MockDataEngine.full_name
+
+    Various words:
+
+    MockDataEngine.noun
+    MockDataEngine.adjective
+
+    Internet related:
+
+    MockDataEngine.forum_username
+    MockDataEngine.professional_username
+    MockDataEngine.tld
+    MockDataEngine.domain
+    MockDataEngine.email
+    MockDataEngine.ipv4_addr
+    MockDataEngine.ipv6_addr
+    MockDataEngine.mac_addr
+    """
     def __init__(self, seed=None):
         self._seed = seed
 
@@ -48,4 +77,4 @@ class MockDataEngine:
 
 
 if __name__ == '__main__':
-    print(MockDataEngine().email)
+    print(MockDataEngine().mac_addr)
