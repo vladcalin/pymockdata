@@ -91,7 +91,6 @@ class Template:
             return random.choice(string.punctuation)
 
     def _token_field_resolver(self, token_data):
-        # TODO: implement this
         if not hasattr(mockdata, token_data):
             raise TokenParsingError("field '{}' does not exist in pymockdata.data".format(token_data))
         return random.choice(getattr(mockdata, token_data))
