@@ -2,7 +2,7 @@ import random
 import string
 
 import pymockdata.data as mockdata
-
+from pymockdata.engine import _load_generators
 
 class TokenParsingError(Exception):
     pass
@@ -69,8 +69,15 @@ class Token:
 
     class Generator:
         # TODO: implement this
-        def __init__(self, generator_class_name):
-            self._class_name = generator_class_name
+        def __init__(self, generator_id):
+            self._generator_id = generator_id
+
+        def get(self):
+            generator = [gen for gen in _load_generators() if gen.ID == self._generator_id]
+            if len(generator):
+                return generator[0]().generate()
+
+            raise TokenParsingError("No suitable generator found for ID={}".format(self._generator_id))
 
 
 class Template:
@@ -86,6 +93,9 @@ class Template:
             if isinstance(token, Token.Repeat):
                 for subtoken in token.get():
                     parsed_tokens.append(self._resolve_token(subtoken))
+                continue
+            elif isinstance(token, Token.Generator):
+                parsed_tokens.append(token.get())
                 continue
             parsed_tokens.append(self._resolve_token(token))
 
@@ -148,6 +158,10 @@ if __name__ == '__main__':
     # Saniyah M. Harding
     # etc.
     t = Template(
-        Token.Repeat(Token.LETTER_LOWER, 10)
+        Token.Generator("female_name"),
+        Token.LITERAL(" loves "),
+        Token.Generator("male_name")
     )
+    print(t.render())
+    print(t.render())
     print(t.render())

@@ -8,6 +8,10 @@ class BaseGenerator(abc.ABC):
     def _templates(self):
         pass
 
+    @abc.abstractproperty
+    def ID(self):
+        pass
+
     def generate(self, seed=None):
         if seed:
             random.seed(seed)

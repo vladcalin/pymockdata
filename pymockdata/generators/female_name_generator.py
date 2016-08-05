@@ -6,6 +6,7 @@ import pymockdata.data as datasets
 
 
 class FemaleNameGenerator(BaseGenerator):
+    ID = "female_name"
     _templates = [
         # Scarlett
         Template(

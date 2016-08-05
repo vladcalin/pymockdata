@@ -6,6 +6,7 @@ import pymockdata.data as datasets
 
 
 class MaleNameGenerator(BaseGenerator):
+    ID = "male_name"
     _templates = [
         # Konnor
         Template(
