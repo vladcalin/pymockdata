@@ -2,7 +2,8 @@ import random
 import string
 
 import pymockdata.data as mockdata
-from pymockdata.mockdataengine import _load_generators
+from pymockdata.mockdataengine import _load_generators, _get_generator
+
 
 class TokenParsingError(Exception):
     pass
@@ -64,6 +65,7 @@ class Token:
 
         Example: (Token.Repeat(Token.DIGIT, 3)) is equivalent to (Token.DIGIT, Token.DIGIT, Token.DIGIT)
         """
+
         def __init__(self, token, repeat=1, random_repeat=None):
             self._token = token
             if random_repeat:
@@ -75,23 +77,42 @@ class Token:
             return [self._token for _ in range(self._repeat)]
 
     class Generator:
-        # TODO: implement this
+        """
+        Causes the token to be resolved by using a generator identified by the generator_id ID.
+
+        For example, Token.Generator("male_name") will resolve to MaleNameGenerator().generate() because
+            MaleNameGenerator.ID == "male_name")
+        """
+
         def __init__(self, generator_id):
             self._generator_id = generator_id
 
         def get(self):
-            generator = [gen for gen in _load_generators() if gen.ID == self._generator_id]
-            if len(generator):
-                return generator[0]().generate()
+            generator = _get_generator(self._generator_id)
+            if generator:
+                return generator().generate()
 
             raise TokenParsingError("No suitable generator found for ID={}".format(self._generator_id))
 
+    class Transform:
+        """
+        Causes the token to be resolved by applying a template function to the wrapped token.
 
-class TokenTemplate:
+        For example, `Token.Transform(Token.LITERAL("hello world"), template=lambda x: x.upper())` will resolve to
+            `"HELLO WORLD"` (`lambda x: x.upper()` will be applied to the `Token.LITERAL(...)` token).
+        """
 
-    def __init__(self, token, template=lambda x: x):
-        self._token = token
-        self._template = template
+        def __init__(self, token, template):
+            self.wrapped_token = token
+            self.template = template
+
+    class Choice:
+
+        def __init__(self, *tokens):
+            self._tokens = tokens
+
+        def get(self):
+            return random.choice(self._tokens)
 
 
 class Template:
@@ -104,20 +125,32 @@ class Template:
 
         parsed_tokens = []
         for token in self._tokens:
-            if isinstance(token, Token.Repeat):
-                for subtoken in token.get():
-                    parsed_tokens.append(self._resolve_token(subtoken))
-                continue
-            elif isinstance(token, Token.Generator):
-                parsed_tokens.append(token.get())
-                continue
             parsed_tokens.append(self._resolve_token(token))
 
         return "".join(parsed_tokens)
 
     def _resolve_token(self, token):
+        if isinstance(token, (Token.Repeat, Token.Transform, Token.Generator, Token.Choice)):
+            return self._resolve_token_wrapper(token)
+        else:
+            return self._resolve_simple_token(token)
+
+    def _resolve_simple_token(self, token):
         token_id, token_data = token
         return self._token_resolvers[token_id](self, token_data)
+
+    def _resolve_token_wrapper(self, token_wrapper):
+        parsed_tokens = []
+        if isinstance(token_wrapper, Token.Repeat):
+            for subtoken in token_wrapper.get():
+                parsed_tokens.append(self._resolve_token(subtoken))
+        elif isinstance(token_wrapper, Token.Generator):
+            parsed_tokens.append(token_wrapper.get())
+        elif isinstance(token_wrapper, Token.Transform):
+            parsed_tokens.append(token_wrapper.template(self._resolve_token(token_wrapper.wrapped_token)))
+        elif isinstance(token_wrapper, Token.Choice):
+            parsed_tokens.append(self._resolve_token(token_wrapper.get()))
+        return "".join(parsed_tokens)
 
     def _token_digit_resolver(self, token_data):
         return random.choice(string.digits)
@@ -166,16 +199,7 @@ class Template:
 
 
 if __name__ == '__main__':
-    # Example definition of a Template object which will generate items similar to:
-    # Lindsay Z. Adams
-    # Miya C. Bradshaw
-    # Saniyah M. Harding
-    # etc.
     t = Template(
-        Token.Generator("female_name"),
-        Token.LITERAL(" loves "),
-        Token.Generator("male_name")
+        Token.Choice(Token.DIGIT, Token.LETTER_LOWER, Token.LETTER_UPPER)
     )
-    print(t.render())
-    print(t.render())
     print(t.render())

@@ -28,6 +28,14 @@ def _load_generators():
     return generators
 
 
+def _get_generator(generator_id):
+    generator = [gen for gen in _load_generators() if gen.ID == generator_id]
+    if generator:
+        return generator[0]
+    else:
+        return None
+
+
 class MockDataEngine:
     def __init__(self, seed=None):
         self._seed = seed
@@ -40,4 +48,4 @@ class MockDataEngine:
 
 
 if __name__ == '__main__':
-    print(MockDataEngine().forum_username)
+    print(MockDataEngine().email)
