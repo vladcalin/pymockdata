@@ -1,10 +1,3 @@
-class Fields:
-    # names
-    FEMALE_NAME = "FEMALE_NAME"
-    MALE_NAME = "MALE_NAME"
-    LAST_NAME = "LAST_NAME"
-    FULL_FEMALE_NAME = "FULL_FEMALE_NAME"
-    FULL_MALE_NAME = "FULL_MALE_NAME"
 
 
 class Output:

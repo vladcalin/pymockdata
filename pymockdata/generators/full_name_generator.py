@@ -1,8 +1,5 @@
-import random
-
-from pymockdata.base import BaseGenerator
+from pymockdata.core.base import BaseGenerator
 from pymockdata.core.template import Template, Token
-import pymockdata.data as datasets
 
 
 class FullNameGenerator(BaseGenerator):

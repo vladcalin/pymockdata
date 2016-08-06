@@ -1,9 +1,8 @@
-import random
 import ipaddress
+import random
 
-from pymockdata.base import BaseGenerator
+from pymockdata.core.base import BaseGenerator
 from pymockdata.core.template import Template, Token
-import pymockdata.data as datasets
 
 
 def generate_valid_ipv6():

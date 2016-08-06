@@ -1,9 +1,9 @@
 import random
-import string
 import re
+import string
 
 import pymockdata.data as mockdata
-from pymockdata.mockdataengine import _load_generators, _get_generator
+from pymockdata.core.engine import _get_generator
 
 
 class TokenParsingError(Exception):

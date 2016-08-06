@@ -1,1 +1,1 @@
-__author__ = 'vcalin'
+from .stream_exporter import StreamExporter
