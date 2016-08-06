@@ -1,5 +1,6 @@
 import random
 import string
+import re
 
 import pymockdata.data as mockdata
 from pymockdata.mockdataengine import _load_generators, _get_generator
@@ -112,8 +113,16 @@ class Token:
             self.template = template
 
     class Choice:
+        """
+        Returns random tokens from a token set.
+        """
 
         def __init__(self, *tokens, count=None, count_range=None):
+            """
+            :param tokens: The token set
+            :param count: The count of the final set. Can be greater than len(tokens). Has priority over count_range
+            :param count_range: A (min, max) tuple. Will generate a random amount of tokens, from min instances to max.
+            """
             self._tokens = tokens
             if count:
                 self._count_min = count
@@ -129,10 +138,48 @@ class Token:
             x = [random.choice(self._tokens) for _ in range(random.randint(self._count_min, self._count_max))]
             return x
 
+    class BaseValue:
+        """
+        Sets a template internal value to be used by other Tokens. Can be used to generate realistic looking sets
+        of data. For example, one can use the template
+
+        Template(
+            Token.BaseValue("base_name", Token.Generator('full_name')),
+            Token.BaseValue("base_domain", Token.Generator('domain')),
+            Token.ValueTransform("base_name", lambda x: x),
+            Token.LITERAL(";"),
+            Token.ValueTransform("base_name", lambda x: x.replace(" ", "").lower().replace("-", "")),
+            Token.LITERAL("@"),
+            Token.ValueTransform("base_domain")
+        )
+
+        to generate pairs of full_name and emails that match:
+        Franklin Berry ; franklinberry@tasty.io
+        Hayden Anahi J. Melton ; haydenanahijmelton@ink.io
+        Molly Booker ; mollybooker@territory.biz
+        """
+
+        def __init__(self, identifier, token):
+            self.token = token
+            self.identifier = identifier
+
+        def get(self):
+            return self.token
+
+    class ValueTransform:
+
+        def __init__(self, identifier, template):
+            self.identifier = identifier
+            self._template = template
+
+        def get(self, base_value):
+            return self._template(base_value)
+
 
 class Template:
     def __init__(self, *tokens):
         self._tokens = tokens
+        self._base_values = {}
 
     def render(self, *, seed=None):
         if seed:
@@ -145,7 +192,8 @@ class Template:
         return "".join(parsed_tokens)
 
     def _resolve_token(self, token):
-        if isinstance(token, (Token.Repeat, Token.Transform, Token.Generator, Token.Choice)):
+        if isinstance(token, (Token.Repeat, Token.Transform, Token.Generator, Token.Choice,
+                              Token.BaseValue, Token.ValueTransform)):
             return self._resolve_token_wrapper(token)
         else:
             return self._resolve_simple_token(token)
@@ -166,6 +214,13 @@ class Template:
         elif isinstance(token_wrapper, Token.Choice):
             for subtoken in token_wrapper.get():
                 parsed_tokens.append(self._resolve_token(subtoken))
+        elif isinstance(token_wrapper, Token.BaseValue):
+            self._base_values[token_wrapper.identifier] = self._resolve_token(token_wrapper.token)
+        elif isinstance(token_wrapper, Token.ValueTransform):
+            if token_wrapper.identifier not in self._base_values:
+                raise TokenParsingError(
+                    "Base value identifier '{}' referenced before definition".format(token_wrapper.identifier))
+            parsed_tokens.append(token_wrapper.get(self._base_values[token_wrapper.identifier]))
         return "".join(parsed_tokens)
 
     def _token_digit_resolver(self, token_data):
@@ -226,6 +281,13 @@ class Template:
 
 if __name__ == '__main__':
     t = Template(
-        Token.Choice(Token.DIGIT, Token.LETTER_LOWER, Token.LETTER_UPPER, count_range=(1, 5))
+        Token.BaseValue("base_name", Token.Generator('full_name')),
+        Token.BaseValue("base_domain", Token.Generator('domain')),
+        Token.ValueTransform("base_name", lambda x: x),
+        Token.LITERAL(" ; "),
+        Token.ValueTransform("base_name", lambda x: re.sub("[ -.]", "", x).lower()),
+        Token.LITERAL("@"),
+        Token.ValueTransform("base_domain", lambda x: x)
     )
+
     print(t.render())
