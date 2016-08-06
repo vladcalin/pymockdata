@@ -77,4 +77,4 @@ class MockDataEngine:
 
 
 if __name__ == '__main__':
-    print(MockDataEngine().mac_addr)
+    print(MockDataEngine().email)

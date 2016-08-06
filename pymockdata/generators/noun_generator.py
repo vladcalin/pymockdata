@@ -8,7 +8,6 @@ import pymockdata.data as datasets
 class NounGenerator(BaseGenerator):
     ID = "noun"
     _templates = [
-        # Stafford
         Template(
             Token.VALUE(datasets.NOUNS)
         )

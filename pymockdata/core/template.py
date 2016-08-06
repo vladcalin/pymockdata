@@ -113,11 +113,21 @@ class Token:
 
     class Choice:
 
-        def __init__(self, *tokens):
+        def __init__(self, *tokens, count=None, count_range=None):
             self._tokens = tokens
+            if count:
+                self._count_min = count
+                self._count_max = count
+            elif count_range:
+                self._count_min = count_range[0]
+                self._count_max = count_range[1]
+            else:
+                self._count_min = 1
+                self._count_max = 1
 
         def get(self):
-            return random.choice(self._tokens)
+            x = [random.choice(self._tokens) for _ in range(random.randint(self._count_min, self._count_max))]
+            return x
 
 
 class Template:
@@ -154,7 +164,8 @@ class Template:
         elif isinstance(token_wrapper, Token.Transform):
             parsed_tokens.append(token_wrapper.template(self._resolve_token(token_wrapper.wrapped_token)))
         elif isinstance(token_wrapper, Token.Choice):
-            parsed_tokens.append(self._resolve_token(token_wrapper.get()))
+            for subtoken in token_wrapper.get():
+                parsed_tokens.append(self._resolve_token(subtoken))
         return "".join(parsed_tokens)
 
     def _token_digit_resolver(self, token_data):
@@ -215,6 +226,6 @@ class Template:
 
 if __name__ == '__main__':
     t = Template(
-        Token.Choice(Token.DIGIT, Token.LETTER_LOWER, Token.LETTER_UPPER)
+        Token.Choice(Token.DIGIT, Token.LETTER_LOWER, Token.LETTER_UPPER, count_range=(1, 5))
     )
     print(t.render())

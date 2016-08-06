@@ -18,8 +18,6 @@ class DomainGenerator(BaseGenerator):
         ),
         Template(
             __wordpick_token,
-            Token.RANDOM_SYMBOL("_-"),
-            __wordpick_token,
             Token.Generator("tld")
         )
     ]

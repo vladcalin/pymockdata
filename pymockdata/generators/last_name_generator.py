@@ -8,7 +8,6 @@ import pymockdata.data as datasets
 class LastNameGenerator(BaseGenerator):
     ID = "last_name"
     _templates = [
-        # Stafford
         Template(
             Token.VALUE(datasets.LAST_NAME)
         )

@@ -8,7 +8,6 @@ import pymockdata.data as datasets
 class TldGenerator(BaseGenerator):
     ID = "tld"
     _templates = [
-        # Stafford
         Template(
             Token.VALUE(datasets.TLD)
         )

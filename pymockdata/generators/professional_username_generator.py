@@ -9,7 +9,6 @@ import pymockdata.data as datasets
 class ProfessionalUsernameGenerator(BaseGenerator):
     ID = "professional_username"
     _templates = [
-        # Stafford
         Template(
             Token.Transform(Token.Generator("full_name"), lambda x: re.sub("[ -]", "_", x.lower()).replace(".", ""))
         ),

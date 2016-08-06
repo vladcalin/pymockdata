@@ -8,9 +8,10 @@ import pymockdata.data as datasets
 class ForumUsernameGenerator(BaseGenerator):
     ID = "forum_username"
     _templates = [
-        # Stafford
         Template(
-            Token.Generator("full_name"),
+            Token.VALUE(datasets.ADJECTIVES),
+            Token.RANDOM_SYMBOL("_-."),
+            Token.VALUE(datasets.NOUNS),
             Token.Repeat(Token.DIGIT, random_repeat=(0, 6))
         ),
     ]
