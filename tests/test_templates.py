@@ -168,6 +168,13 @@ class TemplateUnitTests(TestCase):
         for i in range(250):
             self.assertTrue(5 <= len(t.render(seed=i).split(";")) - 1 <= 10)
 
+    def test_token_special_transform(self):
+        STR = "upper_me"
+        STR_FINAL = "UPPER_ME"
+        t = Template(
+            Token.Transform(Token.Literal(STR), lambda x: x.upper())
+        )
+        self.assertEqual(t.render(), STR_FINAL)
 
 
 
