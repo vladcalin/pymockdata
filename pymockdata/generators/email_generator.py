@@ -11,7 +11,7 @@ class EmailGenerator(BaseGenerator):
     _templates = [
         Template(
             Token.Generator("professional_username"),
-            Token.LITERAL("@"),
+            Token.Literal("@"),
             Token.Generator("domain")
         ),
     ]

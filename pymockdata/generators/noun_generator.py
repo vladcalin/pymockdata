@@ -9,7 +9,7 @@ class NounGenerator(BaseGenerator):
     ID = "noun"
     _templates = [
         Template(
-            Token.VALUE(datasets.NOUNS)
+            Token.DatasetValue(datasets.NOUNS)
         )
     ]
 

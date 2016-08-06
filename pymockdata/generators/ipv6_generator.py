@@ -15,7 +15,7 @@ class Ipv6AddressGenerator(BaseGenerator):
 
     _templates = [
         Template(
-            Token.CUSTOM(generate_valid_ipv6)
+            Token.Custom(generate_valid_ipv6)
         )
     ]
 

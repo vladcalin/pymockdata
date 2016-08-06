@@ -9,7 +9,7 @@ class TldGenerator(BaseGenerator):
     ID = "tld"
     _templates = [
         Template(
-            Token.VALUE(datasets.TLD)
+            Token.DatasetValue(datasets.TLD)
         )
     ]
 

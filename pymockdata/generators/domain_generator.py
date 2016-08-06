@@ -8,8 +8,8 @@ import pymockdata.data as datasets
 class DomainGenerator(BaseGenerator):
     ID = "domain"
 
-    __wordpick_token = Token.Choice(Token.VALUE(datasets.ADJECTIVES), Token.VALUE(datasets.NOUNS),
-                                    Token.VALUE(datasets.ADVERBS))
+    __wordpick_token = Token.Choice(Token.DatasetValue(datasets.ADJECTIVES), Token.DatasetValue(datasets.NOUNS),
+                                    Token.DatasetValue(datasets.ADVERBS))
 
     _templates = [
         Template(

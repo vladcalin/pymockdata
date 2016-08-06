@@ -10,19 +10,19 @@ class MaleNameGenerator(BaseGenerator):
     _templates = [
         # Konnor
         Template(
-            Token.VALUE(datasets.MALE_NAME)
+            Token.DatasetValue(datasets.MALE_NAME)
         ),
         # Zackery Nickolas
         Template(
-            Token.VALUE(datasets.MALE_NAME),
+            Token.DatasetValue(datasets.MALE_NAME),
             Token.SPACE,
-            Token.VALUE(datasets.MALE_NAME)
+            Token.DatasetValue(datasets.MALE_NAME)
         ),
         # Clay-Donavan
         Template(
-            Token.VALUE(datasets.MALE_NAME),
-            Token.LITERAL("-"),
-            Token.VALUE(datasets.MALE_NAME)
+            Token.DatasetValue(datasets.MALE_NAME),
+            Token.Literal("-"),
+            Token.DatasetValue(datasets.MALE_NAME)
         )
     ]
 

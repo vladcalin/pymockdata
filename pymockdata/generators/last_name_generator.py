@@ -9,7 +9,7 @@ class LastNameGenerator(BaseGenerator):
     ID = "last_name"
     _templates = [
         Template(
-            Token.VALUE(datasets.LAST_NAME)
+            Token.DatasetValue(datasets.LAST_NAME)
         )
     ]
 

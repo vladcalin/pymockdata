@@ -46,23 +46,23 @@ class Token:
     SPACE = (_TOKEN_ID_SPACE, None)
 
     @classmethod
-    def VALUE(cls, field_name):
+    def DatasetValue(cls, field_name):
         return cls._TOKEN_ID_FIELD, field_name
 
     @classmethod
-    def NUMBER_INTERVAL(cls, min, max):
+    def NumberInverval(cls, min, max):
         return cls._TOKEN_ID_INTERVAL, (min, max)
 
     @classmethod
-    def LITERAL(cls, str_literal):
+    def Literal(cls, str_literal):
         return cls._TOKEN_ID_LITERAL, str_literal
 
     @classmethod
-    def RANDOM_SYMBOL(cls, symbol_set):
+    def RandomSymbol(cls, symbol_set):
         return cls._TOKEN_ID_SYMBOL, symbol_set
 
     @classmethod
-    def CUSTOM(cls, custom_func, args=None, kwargs=None):
+    def Custom(cls, custom_func, args=None, kwargs=None):
         return cls._TOKEN_ID_CUSTOM, (custom_func, args, kwargs)
 
     class Repeat:
@@ -138,25 +138,25 @@ class Token:
             x = [random.choice(self._tokens) for _ in range(random.randint(self._count_min, self._count_max))]
             return x
 
-    class BaseValue:
+    class Metadata:
         """
         Sets a template internal value to be used by other Tokens. Can be used to generate realistic looking sets
         of data. For example, one can use the template
 
-        Template(
+        t = Template(
             Token.BaseValue("base_name", Token.Generator('full_name')),
             Token.BaseValue("base_domain", Token.Generator('domain')),
             Token.ValueTransform("base_name", lambda x: x),
-            Token.LITERAL(";"),
-            Token.ValueTransform("base_name", lambda x: x.replace(" ", "").lower().replace("-", "")),
-            Token.LITERAL("@"),
-            Token.ValueTransform("base_domain")
+            Token.LITERAL(" ; "),
+            Token.BaseValueTransform(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y)
         )
 
         to generate pairs of full_name and emails that match:
         Franklin Berry ; franklinberry@tasty.io
         Hayden Anahi J. Melton ; haydenanahijmelton@ink.io
         Molly Booker ; mollybooker@territory.biz
+
+        This Token will not resolve in the final output, it is only used internally.
         """
 
         def __init__(self, identifier, token):
@@ -166,14 +166,19 @@ class Token:
         def get(self):
             return self.token
 
-    class ValueTransform:
+    class BaseValueTransform:
 
-        def __init__(self, identifier, template):
-            self.identifier = identifier
+
+        def __init__(self, identifiers, template):
+            if not isinstance(identifiers, list):
+                identifiers = [identifiers]
+            self.identifiers = identifiers
             self._template = template
 
-        def get(self, base_value):
-            return self._template(base_value)
+        def get(self, *base_values):
+            if len(base_values) == 1:
+                return self._template(base_values[0])
+            return self._template(*base_values)
 
 
 class Template:
@@ -193,7 +198,7 @@ class Template:
 
     def _resolve_token(self, token):
         if isinstance(token, (Token.Repeat, Token.Transform, Token.Generator, Token.Choice,
-                              Token.BaseValue, Token.ValueTransform)):
+                              Token.Metadata, Token.BaseValueTransform)):
             return self._resolve_token_wrapper(token)
         else:
             return self._resolve_simple_token(token)
@@ -214,13 +219,16 @@ class Template:
         elif isinstance(token_wrapper, Token.Choice):
             for subtoken in token_wrapper.get():
                 parsed_tokens.append(self._resolve_token(subtoken))
-        elif isinstance(token_wrapper, Token.BaseValue):
+        elif isinstance(token_wrapper, Token.Metadata):
             self._base_values[token_wrapper.identifier] = self._resolve_token(token_wrapper.token)
-        elif isinstance(token_wrapper, Token.ValueTransform):
-            if token_wrapper.identifier not in self._base_values:
-                raise TokenParsingError(
-                    "Base value identifier '{}' referenced before definition".format(token_wrapper.identifier))
-            parsed_tokens.append(token_wrapper.get(self._base_values[token_wrapper.identifier]))
+        elif isinstance(token_wrapper, Token.BaseValueTransform):
+            base_values = []
+            for identifier in token_wrapper.identifiers:
+                if identifier not in self._base_values:
+                    raise TokenParsingError(
+                        "Base value identifier '{}' referenced before definition".format(token_wrapper.identifiers))
+                base_values.append(self._base_values[identifier])
+            parsed_tokens.append(token_wrapper.get(*base_values))
         return "".join(parsed_tokens)
 
     def _token_digit_resolver(self, token_data):
@@ -281,13 +289,11 @@ class Template:
 
 if __name__ == '__main__':
     t = Template(
-        Token.BaseValue("base_name", Token.Generator('full_name')),
-        Token.BaseValue("base_domain", Token.Generator('domain')),
-        Token.ValueTransform("base_name", lambda x: x),
-        Token.LITERAL(" ; "),
-        Token.ValueTransform("base_name", lambda x: re.sub("[ -.]", "", x).lower()),
-        Token.LITERAL("@"),
-        Token.ValueTransform("base_domain", lambda x: x)
+        Token.Metadata("base_name", Token.Generator('full_name')),
+        Token.Metadata("base_domain", Token.Generator('domain')),
+        Token.BaseValueTransform("base_name", lambda x: x),
+        Token.Literal(" ; "),
+        Token.BaseValueTransform(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y),
     )
 
     print(t.render())

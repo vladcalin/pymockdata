@@ -15,7 +15,7 @@ class Ipv4AddressGenerator(BaseGenerator):
 
     _templates = [
         Template(
-            Token.CUSTOM(generate_valid_ipv4)
+            Token.Custom(generate_valid_ipv4)
         )
     ]
 

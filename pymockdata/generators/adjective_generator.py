@@ -10,7 +10,7 @@ class AdjectiveGenerator(BaseGenerator):
     _templates = [
         # Stafford
         Template(
-            Token.VALUE(datasets.ADJECTIVES)
+            Token.DatasetValue(datasets.ADJECTIVES)
         )
     ]
 

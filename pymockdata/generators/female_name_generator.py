@@ -10,19 +10,19 @@ class FemaleNameGenerator(BaseGenerator):
     _templates = [
         # Scarlett
         Template(
-            Token.VALUE(datasets.FEMALE_NAME)
+            Token.DatasetValue(datasets.FEMALE_NAME)
         ),
         # Karlie Bailee
         Template(
-            Token.VALUE(datasets.FEMALE_NAME),
+            Token.DatasetValue(datasets.FEMALE_NAME),
             Token.SPACE,
-            Token.VALUE(datasets.FEMALE_NAME)
+            Token.DatasetValue(datasets.FEMALE_NAME)
         ),
         # Kianna-Keyla
         Template(
-            Token.VALUE(datasets.FEMALE_NAME),
-            Token.LITERAL("-"),
-            Token.VALUE(datasets.FEMALE_NAME)
+            Token.DatasetValue(datasets.FEMALE_NAME),
+            Token.Literal("-"),
+            Token.DatasetValue(datasets.FEMALE_NAME)
         )
     ]
 
