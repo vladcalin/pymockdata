@@ -150,12 +150,21 @@ class DataFactory:
 
 if __name__ == '__main__':
     data_model = DataModel(
-        person_name=DataModel.full_name,
-        email=DataModel.email,
-        unofficial_username=DataModel.forum_username
+        first_field=DataModel.full_name,
+        second_field=DataModel.email,
+        third_field=DataModel.ipv4_addr
     )
 
-    from pymockdata.exporters.file import HtmlTableExporter
+    from pymockdata.exporters.file import JsonExporter
 
-    exporter = HtmlTableExporter()
+    exporter = JsonExporter("myfile.json")
     DataFactory(data_model, exporter).generate(100)
+
+    print(data_model.generate_batch(10))
+
+    # generator = MockDataGenerator()
+    # print(generator.full_name())
+    # print(generator.mac_addr())
+    # print(generator.ipv4_addr())
+    # print(generator.domain())
+    # print(generator.forum_username())
