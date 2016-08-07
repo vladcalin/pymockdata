@@ -1,6 +1,7 @@
 # pymockdata 
 [![Build Status](https://travis-ci.org/vladcalin/pymockdata.svg?branch=master)](https://travis-ci.org/vladcalin/pymockdata) 
 [![Coverage Status](https://coveralls.io/repos/github/vladcalin/pymockdata/badge.svg?branch=master)](https://coveralls.io/github/vladcalin/pymockdata?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/pymockdata/badge/?version=latest)](http://pymockdata.readthedocs.io/en/latest/?badge=latest)
 
 A Python library for generating mock data and exporting it in various formats.
 
