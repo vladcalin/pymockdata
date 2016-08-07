@@ -11,10 +11,9 @@ A Python library for generating mock data and exporting it in various formats.
 3. [Installation](#installation)
 4. [Usage](#usage)
     1. [The DataModel class](#data_model_class)
-    2. [The MockDataGenerator class](#mock_data_generator_class)
-    3. [The DataFactory class and exporters](#data_factory_class)
+    2. [The DataFactory class and exporters](#data_factory_class)
 	
-5. [Known issues](#issues)
+5. [Future work](#future_work)
 6. [Contributing](#contributing)
 7. [Credits and references](#credits)
 
@@ -22,23 +21,38 @@ A Python library for generating mock data and exporting it in various formats.
 <a name="motivation"/>
 ## Motivation
 
-In various cases I needed real-looking generated data for tests and presentations and I thought that I might build a tool
-that generates such data and exports it to various formats such as HTML, XML, CSV, JSON, etc. or even exporting it directly into a database.
+This project aims to provide a method for generating mock data for other
+applications that might need it for various reasons. Some of these reasons 
+might be: presenting a demo of your application in an realistic manner
+ with users that look real, test your applications capabilities and behaviour when 
+the database has more than 10 entries or measure the performance of your application
+when dealing with huge amount of data.
 
 <a name="description"/>
 ## Description
 
-TODO
+The *`pymockdata`* Python library is capable of generating mock data (although there
+are better alternatives out there, such as [fake-factory](https://github.com/joke2k/faker)
+that have more features, such as localization, `pymockdata` offers a suite of
+classes that automatize the data exporting to various formats or directly into a database
+(using raw SQL insert statements or by wrapping an ORM model (peewee, django, sql-alchemy) (to be done).
 
 <a name="dependencies"/>
 ## Dependencies
 
-TODO
+All the dependencies are listed in `requirements.txt` and in `setup.py`.
+
+- `click` for command-line interface
 
 <a name="installation"/>
 ## Installation
 
-TODO
+Download the project and run 
+```
+python setup.py install
+```
+
+and the project should be ready to run.
 
 <a name="usage"/>
 ## Usage
@@ -102,32 +116,6 @@ The `DataModel` class exposes constants that should be used as field type in the
  
 The `DataModel.generate_one()` method will generate a `dict` instance populated with mock data, and the `DataModel.generate_batch(count)` will generate a list if `dict` instances.
 
-<a name="mock_data_generator_class"/>
-### The MockDataGenerator class
-
-
-This class can be used to generate one value of a kind. Example usage:
-
-```python
-	generator = MockDataGenerator()
-
-	# calling specific methods that will generate just one mock value from each category
-    	print(generator.full_name())
-    	# Alberto Jack P. Montes
-    
-    	print(generator.mac_addr())
-    	# da:76:20:3f:75:e3
-    
-    	print(generator.ipv4_addr())
-    	# 171.15.230.181
-    
-    	print(generator.domain())
-    	# farnecessarily.ru
-    
-    	print(generator.forum_username())
-    	# magnificent.harmony9
-```
-
 <a name="data_factory_class"/>
 ### The DataFactory class and exporters
 
@@ -175,15 +163,34 @@ After that, in the `myfile.json` file we will have generated 100 mock instances:
         },
         ...
 
-## Known issues
+<a name="future_work"/>
+## Future work
 
-TODO
+- [ ] document all code
+- [ ] have documentation generated with [`sphinx`](http://www.sphinx-doc.org/en/stable/)
+- [ ] add raw database insert exporters for 
+    - [ ] SQLite
+    - [ ] PostgreSQL
+    - [ ] MySQL
+    - [ ] MongoDB
+    - [ ] others?
+- [ ] add ORM model wrappers
+    - [ ] django
+    - [ ] sql-alchemy
+    - [ ] django
+    - [ ] others?
+- [ ] test code coverage above 90%
+- [ ] add localization support
+- [ ] add more generators
 
+<a name="contributing"/>
 ## Contributing
 
-TODO
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
+<a name="credits"/>
 ## Credits and references
 
-TODO
+- This project was inspired by [`fake-factory`](https://github.com/joke2k/faker)
+- The base name/nouns/adjectives/adverbs lists 
 

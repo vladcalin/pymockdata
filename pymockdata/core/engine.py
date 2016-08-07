@@ -4,6 +4,7 @@ import os
 
 import pymockdata.generators
 from pymockdata.core.base import BaseGenerator, BaseExporter
+from pymockdata.exporters import StreamExporter
 
 _ALL_GENERATORS = None
 
@@ -36,36 +37,7 @@ def _get_generator(generator_id):
         return None
 
 
-class MockDataGenerator:
-    """
-    Main class for generating mock data. Data is randomly generated when a specific member is accessed.
-    The following members are used for generating mock data:
-
-    Names:
-
-    MockDataEngine.male_name
-    MockDataEngine.female_name
-    MockDataEngine.last_name
-    MockDataEngine.full_male_name
-    MockDataEngine.full_female_name
-    MockDataEngine.full_name
-
-    Various words:
-
-    MockDataEngine.noun
-    MockDataEngine.adjective
-
-    Internet related:
-
-    MockDataEngine.forum_username
-    MockDataEngine.professional_username
-    MockDataEngine.tld
-    MockDataEngine.domain
-    MockDataEngine.email
-    MockDataEngine.ipv4_addr
-    MockDataEngine.ipv6_addr
-    MockDataEngine.mac_addr
-    """
+class _MockDataGenerator:
 
     def __init__(self, seed=None):
         self._seed = seed
@@ -83,10 +55,40 @@ class MockDataGenerator:
 
         if gen:
             return GeneratorWrapper(gen[0](), self._seed)
-        return super(MockDataGenerator, self).__getattribute__(item)
+        return super(_MockDataGenerator, self).__getattribute__(item)
 
 
 class DataModel:
+    """
+    Defines a model for the generated mock data. Used for generation of mock entries that consist in sets of key/value pairs
+
+    Usage:
+    >>> my_data_model = DataModel(field1=DataModel.male_name, field2=DataModel.last_name, ...)
+    >>> my_data_model.generate_one()
+    {"field1": "John", "field2": "Smith" ... }
+    >>> my_data_model.generate_batch(2)
+    [{"field1": "Mike", "field2": "Anderson" ... }, {"field1": "Zachery", "field2": "Wilson" ... }]
+
+    Supported value types are:
+
+    - DataModel.male_name
+    - DataModel.female_name
+    - DataModel.last_name
+    - DataModel.full_male_name
+    - DataModel.full_female_name
+    - DataModel.full_name
+    - DataModel.noun
+    - DataModel.adjective
+    - DataModel.forum_username
+    - DataModel.professional_username
+    - DataModel.tld
+    - DataModel.domain
+    - DataModel.email
+    - DataModel.ipv4_addr
+    - DataModel.ipv6_addr
+    - DataModel.mac_addr
+
+    """
     # constants
     male_name = "male_name"
     female_name = "female_name"
@@ -108,10 +110,19 @@ class DataModel:
     mac_addr = "mac_addr"
 
     def __init__(self, seed=None, **fields):
+        """
+        Defines the model for the generated entries
+        :param seed: a numeric value used for the random generator. Defaults to the :function:`os.urandom`
+        :param fields: the fields of the data model. Each field value must be one of the constants defined in this class
+        """
         self._fields = fields
-        self._mock_data_generator = MockDataGenerator(seed=seed)
+        self._mock_data_generator = _MockDataGenerator(seed=seed)
 
     def generate_one(self):
+        """
+        Generates one mock entry.
+        :return: a :class:`dict` instance containing the generated mock data.
+        """
         entry = {}
         for key in self._fields.keys():
             entry[key] = self._resolve_field(self._fields[key])
@@ -121,18 +132,33 @@ class DataModel:
         return getattr(self._mock_data_generator, field_value)()
 
     def generate_batch(self, count):
+        """
+        Generates a list of mock entries. This function calls :method:`generate_one()` multiple times in order to populate
+        the list
+        :param count: number of items to generate
+        :return:
+        """
         return [self.generate_one() for _ in range(count)]
 
     def value_for(self, field):
+        """
+        Generates a single mock value of type `field`.
+        :param field: one of the constants defined in this class
+        :return:
+        """
         return self._resolve_field(field)
 
 
 class DataFactory:
     """
-    A class that will automatically export generated data through the exporter.
+    A class that will automatically generate data and export it through the exporter.
     """
 
-    def __init__(self, data_model, exporter):
+    def __init__(self, data_model, exporter=StreamExporter()):
+        """
+        :param data_model: a :class:`DataModel` instance
+        :param exporter: an instance of exporter. See :class:`BaseExporter` implementations
+        """
 
         if not isinstance(data_model, DataModel):
             raise TypeError("data_model must be an instance of pymockdata.core.engine.DataModel")
@@ -144,6 +170,12 @@ class DataFactory:
         self.exporter = exporter
 
     def generate(self, count):
+        """
+        Generates and exports `count` mock data instances generated through the `DataModel` instance used in
+        constructor and exports them using the designated exporter instance (used in constructor). Has no return value.
+        :param count: The number of instances to generate and export
+        :type count: int
+        """
         self.exporter.add_entries(data_model.generate_batch(count))
         self.exporter.export()
 
