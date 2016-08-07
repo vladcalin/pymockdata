@@ -37,38 +37,55 @@ class Token:
     _TOKEN_ID_SPACE = 7
     _TOKEN_ID_CUSTOM = 8
 
+    """Renders to a random digit"""
     DIGIT = (_TOKEN_ID_DIGIT, None)
+
+    """Renders to a lowercase ascii letter"""
     LETTER_LOWER = (_TOKEN_ID_LETTER, "lower")
+
+    """Renders to a upper case ascii letter"""
     LETTER_UPPER = (_TOKEN_ID_LETTER, "upper")
+
+    """Renders to a ascii letter"""
     LETTER = (_TOKEN_ID_LETTER, None)
+
+    """Render to '.'"""
     DOT = (_TOKEN_ID_DOT, None)
+
+    """Renders to a random symbol from string.punctuation"""
     SYMBOL = (_TOKEN_ID_SYMBOL, None)
+
+    """Renders to ' '"""
     SPACE = (_TOKEN_ID_SPACE, None)
 
     @classmethod
     def DatasetValue(cls, field_name):
+        """Renders to a random item from the designated dataset"""
         return cls._TOKEN_ID_FIELD, field_name
 
     @classmethod
     def NumberInverval(cls, min, max):
+        """Renders to a random number from [min, max] interval, in decimal representation"""
         return cls._TOKEN_ID_INTERVAL, (min, max)
 
     @classmethod
     def Literal(cls, str_literal):
+        """Renders to the string literal passed as parameter"""
         return cls._TOKEN_ID_LITERAL, str_literal
 
     @classmethod
     def RandomSymbol(cls, symbol_set):
+        """Renders to a random character from the string passed as parameter"""
         return cls._TOKEN_ID_SYMBOL, symbol_set
 
     @classmethod
     def Custom(cls, custom_func, args=None, kwargs=None):
+        """Is rendered as the result of `custom_func(*args, **kwargs)`. `custom_func` must return a string"""
         return cls._TOKEN_ID_CUSTOM, (custom_func, args, kwargs)
 
     class Repeat:
         """
         Causes the designated token to repeat multiple times
-
         Example: (Token.Repeat(Token.DIGIT, 3)) is equivalent to (Token.DIGIT, Token.DIGIT, Token.DIGIT)
         """
 
@@ -85,7 +102,6 @@ class Token:
     class Generator:
         """
         Causes the token to be resolved by using a generator identified by the generator_id ID.
-
         For example, Token.Generator("male_name") will resolve to MaleNameGenerator().generate() because
             MaleNameGenerator.ID == "male_name")
         """
@@ -103,7 +119,6 @@ class Token:
     class Transform:
         """
         Causes the token to be resolved by applying a template function to the wrapped token.
-
         For example, `Token.Transform(Token.LITERAL("hello world"), template=lambda x: x.upper())` will resolve to
             `"HELLO WORLD"` (`lambda x: x.upper()` will be applied to the `Token.LITERAL(...)` token).
         """
@@ -138,14 +153,14 @@ class Token:
             x = [random.choice(self._tokens) for _ in range(random.randint(self._count_min, self._count_max))]
             return x
 
-    class Metadata:
+    class SetInternalVariable:
         """
         Sets a template internal value to be used by other Tokens. Can be used to generate realistic looking sets
-        of data. For example, one can use the template
+        of data with connections between fields. For example, one can use the template
 
         t = Template(
-            Token.BaseValue("base_name", Token.Generator('full_name')),
-            Token.BaseValue("base_domain", Token.Generator('domain')),
+            Token.SetInternalVariable("base_name", Token.Generator('full_name')),
+            Token.SetInternalVariable("base_domain", Token.Generator('domain')),
             Token.ValueTransform("base_name", lambda x: x),
             Token.LITERAL(" ; "),
             Token.BaseValueTransform(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y)
@@ -166,10 +181,27 @@ class Token:
         def get(self):
             return self.token
 
-    class BaseValueTransform:
-
+    class GetInternalVariable:
+        """
+        Renders as the result of the template applied over the set of designated internal variables.
+        """
 
         def __init__(self, identifiers, template):
+            """
+            Applies the template over the set of internal variables
+
+            For example:
+
+            Template(
+                Token.SetInternalVariable("example", Token.Literal("hi")),
+                Token.GetInternalVariable("example", lambda x: x.upper())
+            ).render()
+
+            will render as "HI"
+
+            :param identifiers: a single internal variable identifier or a list of internal variables identifiers
+            :param template: a function that takes as many parameters as the number of passed identifiers
+            """
             if not isinstance(identifiers, list):
                 identifiers = [identifiers]
             self.identifiers = identifiers
@@ -182,11 +214,36 @@ class Token:
 
 
 class Template:
+    """
+    Base class that defines generation rules for mock data. Basically it represents a collection of :class:Token objects
+    that when needed, will process the tokens in the order of their definition and produce the final result.
+
+    Example usage:
+
+    >>> t = Template(
+    >>>     Token.Literal("hello world")
+    >>>)
+    >>> t.render()
+     "hello world"
+
+
+    """
     def __init__(self, *tokens):
+        """
+        Sequence of tokens that defines the components of the mock generated data. See :class:`Token` for more information
+        about the tokens possible values.
+        :param tokens: :class:`Token` objects
+        """
         self._tokens = tokens
         self._base_values = {}
 
     def render(self, *, seed=None):
+        """
+        Processes the sequence of tokens defined in the constructor and returns the final result.
+        :param seed: If present, this value will be used as seed for random generation.
+        :return: a string representing the generated mock value
+        :rtype: str
+        """
         if seed:
             random.seed(seed)
 
@@ -198,7 +255,7 @@ class Template:
 
     def _resolve_token(self, token):
         if isinstance(token, (Token.Repeat, Token.Transform, Token.Generator, Token.Choice,
-                              Token.Metadata, Token.BaseValueTransform)):
+                              Token.SetInternalVariable, Token.GetInternalVariable)):
             return self._resolve_token_wrapper(token)
         else:
             return self._resolve_simple_token(token)
@@ -219,9 +276,9 @@ class Template:
         elif isinstance(token_wrapper, Token.Choice):
             for subtoken in token_wrapper.get():
                 parsed_tokens.append(self._resolve_token(subtoken))
-        elif isinstance(token_wrapper, Token.Metadata):
+        elif isinstance(token_wrapper, Token.SetInternalVariable):
             self._base_values[token_wrapper.identifier] = self._resolve_token(token_wrapper.token)
-        elif isinstance(token_wrapper, Token.BaseValueTransform):
+        elif isinstance(token_wrapper, Token.GetInternalVariable):
             base_values = []
             for identifier in token_wrapper.identifiers:
                 if identifier not in self._base_values:
@@ -289,11 +346,11 @@ class Template:
 
 if __name__ == '__main__':
     t = Template(
-        Token.Metadata("base_name", Token.Generator('full_name')),
-        Token.Metadata("base_domain", Token.Generator('domain')),
-        Token.BaseValueTransform("base_name", lambda x: x),
+        Token.SetInternalVariable("base_name", Token.Generator('full_name')),
+        Token.SetInternalVariable("base_domain", Token.Generator('domain')),
+        Token.GetInternalVariable("base_name", lambda x: x),
         Token.Literal(" ; "),
-        Token.BaseValueTransform(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y),
+        Token.GetInternalVariable(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y),
     )
 
     print(t.render())
