@@ -10,10 +10,9 @@ A Python library for generating mock data and exporting it in various formats.
 2. [Description](#description)
 3. [Installation](#installation)
 4. [Usage](#usage)
-
-	a) [The DataModel class](#data_model_class)
-	b) [The MockDataGenerator class](#mock_data_generator_class)
-	c) [The DataFactory class and exporters](#data_factory_class)
+    1. [The DataModel class](#data_model_class)
+    2. [The MockDataGenerator class](#mock_data_generator_class)
+    3. [The DataFactory class and exporters](#data_factory_class)
 	
 5. [Known issues](#issues)
 6. [Contributing](#contributing)
