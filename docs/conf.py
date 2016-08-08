@@ -1,6 +1,3 @@
-from pymockdata import DataModel, DataFactory
-from pymockdata.core.template import Token, Template
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
