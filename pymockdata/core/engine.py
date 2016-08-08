@@ -176,7 +176,7 @@ class DataFactory:
         :param count: The number of instances to generate and export
         :type count: int
         """
-        self.exporter.add_entries(data_model.generate_batch(count))
+        self.exporter.add_entries(self.data_model.generate_batch(count))
         self.exporter.export()
 
 
