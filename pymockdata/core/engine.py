@@ -177,7 +177,7 @@ class DataFactory:
         :type count: int
         """
         self.exporter.add_entries(self.data_model.generate_batch(count))
-        self.exporter.export()
+        return self.exporter.export()
 
 
 if __name__ == '__main__':

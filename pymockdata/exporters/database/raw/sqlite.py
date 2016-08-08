@@ -2,6 +2,7 @@ from sqlite3 import connect as sqlite_connect
 
 from pymockdata.core.base import BaseExporter
 from pymockdata.core.errors import ExporterInitializationError
+from pymockdata.exporters.database.raw.sqlquery_gen import RawSqlInsertStatementsExporter
 
 
 class RawSqliteExporter(BaseExporter):
@@ -38,6 +39,7 @@ class RawSqliteExporter(BaseExporter):
         self._db = sqlite_connect(database_file)
         self._table_name = table_name
         self._entries = []
+        self._query_generator = RawSqlInsertStatementsExporter(self._table_name)
 
         query_result = self._db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?;",
                                         (self._table_name,))
@@ -45,22 +47,16 @@ class RawSqliteExporter(BaseExporter):
             raise ExporterInitializationError("No table '{}' exists".format(self._table_name))
 
     def add_entries(self, entries):
-        self._entries.extend(entries)
+        self._query_generator.add_entries(entries)
 
     def add_entry(self, entry):
-        self._entries.append(entry)
+        self._query_generator.add_entry(entry)
 
     def export(self):
         cursor = self._db.cursor()
-        for entry in self._entries:
-            sql_str = "insert into {}({}) values ({})".format(
-                self._table_name,
-                ",".join(['"' + x + '"' for x in list(entry.keys())]),
-                ",".join(['"' + x + '"' for x in list(entry.values())])
-            )
-            cursor.execute(sql_str)
+        for query in self._query_generator.export():
+            cursor.execute(query)
         self._db.commit()
-
         cursor.close()
 
 
