@@ -6,11 +6,6 @@
 Welcome to pymockdata's documentation!
 ======================================
 
-.. autoclass:: pymockdata.DataSet
-   :members:
-   :functions:
-
-
 Contents:
 
 .. toctree::
@@ -19,7 +14,11 @@ Contents:
    introduction
    usage
 
+   advanced_usage
 
+   in_depth_topics
+
+   classes
 
 
 

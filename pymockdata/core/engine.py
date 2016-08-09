@@ -182,14 +182,16 @@ class DataFactory:
 
 if __name__ == '__main__':
     data_model = DataModel(
-        first_field=DataModel.full_name,
-        second_field=DataModel.email,
-        third_field=DataModel.ipv4_addr
+        name=DataModel.full_name,
+        email=DataModel.email,
+        ip=DataModel.ipv4_addr,
+        mac=DataModel.mac_addr,
     )
 
-    from pymockdata.exporters.file import JsonExporter
+    from pymockdata.exporters.file import JsonExporter, XmlExporter, CsvExporter, HtmlTableExporter
+    from pymockdata.exporters import StreamExporter
 
-    exporter = JsonExporter("myfile.json")
+    exporter = HtmlTableExporter()
     DataFactory(data_model, exporter).generate(100)
 
     print(data_model.generate_batch(10))
