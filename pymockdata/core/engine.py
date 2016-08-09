@@ -3,8 +3,7 @@ import inspect
 import os
 
 import pymockdata.generators
-from pymockdata.core.base import BaseGenerator, BaseExporter
-from pymockdata.exporters import StreamExporter
+from pymockdata.core.base import BaseGenerator
 
 _ALL_GENERATORS = None
 
@@ -37,8 +36,7 @@ def _get_generator(generator_id):
         return None
 
 
-class _MockDataGenerator:
-
+class DataGenerator:
     def __init__(self, seed=None):
         self._seed = seed
 
@@ -55,7 +53,7 @@ class _MockDataGenerator:
 
         if gen:
             return GeneratorWrapper(gen[0](), self._seed)
-        return super(_MockDataGenerator, self).__getattribute__(item)
+        return super(DataGenerator, self).__getattribute__(item)
 
 
 class DataModel:
@@ -116,7 +114,7 @@ class DataModel:
         :param fields: the fields of the data model. Each field value must be one of the constants defined in this class
         """
         self._fields = fields
-        self._mock_data_generator = _MockDataGenerator(seed=seed)
+        self._mock_data_generator = DataGenerator(seed=seed)
 
     def generate_one(self):
         """
@@ -149,37 +147,6 @@ class DataModel:
         return self._resolve_field(field)
 
 
-class DataFactory:
-    """
-    A class that will automatically generate data and export it through the exporter.
-    """
-
-    def __init__(self, data_model, exporter=StreamExporter()):
-        """
-        :param data_model: a :class:`DataModel` instance
-        :param exporter: an instance of exporter. See :class:`BaseExporter` implementations
-        """
-
-        if not isinstance(data_model, DataModel):
-            raise TypeError("data_model must be an instance of pymockdata.core.engine.DataModel")
-
-        if not isinstance(exporter, BaseExporter):
-            raise TypeError("exporter must be an instance of pymockdata.exporters.*")
-
-        self.data_model = data_model
-        self.exporter = exporter
-
-    def generate(self, count):
-        """
-        Generates and exports `count` mock data instances generated through the `DataModel` instance used in
-        constructor and exports them using the designated exporter instance (used in constructor). Has no return value.
-        :param count: The number of instances to generate and export
-        :type count: int
-        """
-        self.exporter.add_entries(self.data_model.generate_batch(count))
-        return self.exporter.export()
-
-
 if __name__ == '__main__':
     data_model = DataModel(
         name=DataModel.full_name,
@@ -188,17 +155,6 @@ if __name__ == '__main__':
         mac=DataModel.mac_addr,
     )
 
-    from pymockdata.exporters.file import JsonExporter, XmlExporter, CsvExporter, HtmlTableExporter
-    from pymockdata.exporters import StreamExporter
+    # print(data_model.generate_batch(10))
 
-    exporter = HtmlTableExporter()
-    DataFactory(data_model, exporter).generate(100)
-
-    print(data_model.generate_batch(10))
-
-    # generator = MockDataGenerator()
-    # print(generator.full_name())
-    # print(generator.mac_addr())
-    # print(generator.ipv4_addr())
-    # print(generator.domain())
-    # print(generator.forum_username())
+    print(DataGenerator().full_name())

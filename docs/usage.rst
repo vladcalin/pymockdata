@@ -1,16 +1,15 @@
 Usage
 =====
 
-Next, we will show how to build a ``DataModel`` with specific field types and choose an ``Exporter``.
-
-
-Defining the DataModel
-----------------------
+Next, we will show how to build a ``DataModel`` with specific field types.
 
 The :py:func:`DataModel` class encapsulates the fields specifications that need to be generated, and when prompted to
 generate the entries, will call the right generators in order to produce the desired results.
 
-Note: use the defined constants in the :py:func:`DataModel` class to avoid typos and to be future proof.
+.. note::
+
+    Use the defined constants in the :py:func:`DataModel` class to avoid typos and to be future proof.
+    For more information, see :ref:`defined_field_types`.
 
 A basic example of :py:func:`DataModel` is::
 
@@ -21,27 +20,17 @@ A basic example of :py:func:`DataModel` is::
         customer_mac=DataModel.mac
     )
 
-After that, you can generate instances manually by calling :py:func:`DataModel.generate_one` or :py:func:`DataModel.generate_batch` or wrapping it into a :py:class:`DataFactory` instance to
-generate and export instances at the same time.
+After that, you can generate instances manually by calling :py:func:`DataModel.generate_one` or :py:func:`DataModel.generate_batch`.
 
 
-Choosing an exporter
---------------------
+Another way to generate data is by using a :py:class:`DataGenerator` instance.
 
-There are various exporters to choose from (see :ref:`Exporters <exporters>` for available exporters).
+Example::
 
-After choosing the right one for your needs, go to nest step.
+    DataGenerator().full_name()
+    # Reyna-Kayleigh Wright
 
-
-Generating and exporting
-------------------------
-
-This process is done by the :py:class:`DataFactory` class. The code to accomplish that is the following::
-
-    my_data_model = DataModel(...)
-    my_exporter = XmlExporter("my_data.xml")  # export data to a XML file
-    DataFactory(my_data_model, my_exporter).generate(100)
-
-And after that, you will have exported 100 mock entries into the ``my_data.xml`` file in XML format.
+    DataGenerator().ipv4_addr()
+    # 172.88.101.81
 
 Enjoy :)

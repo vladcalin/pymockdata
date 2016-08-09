@@ -1,6 +1,4 @@
 Advanced usage
 ==============
 
-
-
-asdasdasd
+TODO

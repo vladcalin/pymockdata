@@ -14,9 +14,8 @@ A Python library for generating mock data and exporting it in various formats.
     1. [The DataModel class](#data_model_class)
     2. [The DataFactory class and exporters](#data_factory_class)
 	
-5. [Future work](#future_work)
-6. [Contributing](#contributing)
-7. [Credits and references](#credits)
+5. [Contributing](#contributing)
+6. [Credits and references](#credits)
 
 
 <a name="motivation"/>
@@ -32,18 +31,8 @@ when dealing with huge amount of data.
 <a name="description"/>
 ## Description
 
-The *`pymockdata`* Python library is capable of generating mock data (although there
-are better alternatives out there, such as [fake-factory](https://github.com/joke2k/faker)
-that have more features, such as localization, `pymockdata` offers a suite of
-classes that automatize the data exporting to various formats or directly into a database
-(using raw SQL insert statements or by wrapping an ORM model (peewee, django, sql-alchemy) (to be done).
+The *`pymockdata`* Python library is capable of generating mock data for your applications.
 
-<a name="dependencies"/>
-## Dependencies
-
-All the dependencies are listed in `requirements.txt` and in `setup.py`.
-
-- `click` for command-line interface
 
 <a name="installation"/>
 ## Installation
@@ -56,7 +45,7 @@ python setup.py install
 and the project should be ready to run.
 
 <a name="usage"/>
-## Usage
+## Simple usage
 
 There are various methods to generate mock data. 
 
@@ -115,74 +104,19 @@ The `DataModel` class exposes constants that should be used as field type in the
 - ipv6_addr
 - mac_addr
  
-The `DataModel.generate_one()` method will generate a `dict` instance populated with mock data, and the `DataModel.generate_batch(count)` will generate a list if `dict` instances.
+<a name="data_generator_class"/>
+### The DataGenerator class
 
-<a name="data_factory_class"/>
-### The DataFactory class and exporters
+This class can be used for generating a single instance of some type.
 
-Exporters are classes specialized in exporting the generated data in various formats. Available exporters are: 
-- `pymockdata.exporters.StreamExporter`(writes the data directly to a stream, default `sys.stdout`)
-- `pymockdata.exporters.file.CsvExporter` (writes the data into a CSV file, the field names are not preserved)
-- `pymockdata.exporters.file.JsonExporter` (writes the data into a JSON file, using the JSON specifications)
-- `pymockdata.exporters.file.XmlExporter` (writes data into a XML file, respecting the XML specifications. The exported file will have the structure:
+Example:
+```python
 
-```xml
-	<entries>
-		<entry>
-			<field_one>value</field_one>
-			<field_two>value</field_two>
-			...
-		</entry>
-		...
-	</entries>
-```	
-- `pymockdata.exporters.file.HtmlTableExporter` (will export data to a HTML file, in a table structure)
-
-The `DataFactory` constructor takes as parameters a `DataModel` instance and an exporter instance.
-
-Example usage:
-
-	# the data_model instance is declared as in the previous examples
-	from pymockdata.exporters.file import JsonExporter
-
-    exporter = JsonExporter("myfile.json")
-    DataFactory(data_model, exporter).generate(100)
-
-After that, in the `myfile.json` file we will have generated 100 mock instances:
-
-	{
-    "entries": [
-        {
-            "third_field": "112.125.80.60",
-            "first_field": "Cristal Joyce",
-            "second_field": "santiago_mohammedhouston@talk.io"
-        },
-        {
-            "third_field": "254.167.37.229",
-            "first_field": "Guadalupe Cindy Fitzpatrick",
-            "second_field": "heidi_sageware@yawningly.biz"
-        },
-        ...
-
-<a name="future_work"/>
-## Future work
-
-- [ ] document all code
-- [ ] have documentation generated with [`sphinx`](http://www.sphinx-doc.org/en/stable/)
-- [ ] add raw database insert exporters for 
-    - [ ] SQLite
-    - [ ] PostgreSQL
-    - [ ] MySQL
-    - [ ] MongoDB
-    - [ ] others?
-- [ ] add ORM model wrappers
-    - [ ] django
-    - [ ] sql-alchemy
-    - [ ] django
-    - [ ] others?
-- [ ] test code coverage above 90%
-- [ ] add localization support
-- [ ] add more generators
+DataGenerator.full_name()
+# Aden-Michael F. Hester
+DataGenerator.ipv4_addr()
+# 172.88.101.81
+```
 
 <a name="contributing"/>
 ## Contributing

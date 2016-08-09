@@ -16,8 +16,6 @@ Contents:
 
    advanced_usage
 
-   in_depth_topics
-
    classes
 
 
