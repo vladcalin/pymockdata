@@ -186,7 +186,7 @@ class Token:
         Renders as the result of the template applied over the set of designated internal variables.
         """
 
-        def __init__(self, identifiers, template):
+        def __init__(self, identifiers, template=lambda x: x):
             """
             Applies the template over the set of internal variables
 
