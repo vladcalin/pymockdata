@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="pymockdata",
-    version="0.0.1",
+    version="0.1.0",
     description="A Python library for generating mock data "
                 "and exporting in various formats or directly into a database",
     author="Vlad Calin",

@@ -66,8 +66,7 @@ A generator is a sublcass of :py:class:`BaseGenerator` and must have the followi
 methods defined:
 
 - ``ID = "some_identifier"`` which identifies the generator. The generator will be referenced by this identifier
-- ``_templates = [Template(...), Template(...)]`` which is a list of templates. When generating a new value, a random template
-from this list will be chosen and rendered.
+- ``_templates = [Template(...), Template(...)]`` which is a list of templates. When generating a new value, a random template from this list will be chosen and rendered.
 - ``on_finish(self, result_string)`` which is an optional function that takes one string parameter which is called after the rendering is done.
 
 

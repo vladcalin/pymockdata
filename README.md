@@ -33,7 +33,6 @@ when dealing with huge amount of data.
 
 The *`pymockdata`* Python library is capable of generating mock data for your applications.
 
-
 <a name="installation"/>
 ## Installation
 
@@ -41,7 +40,6 @@ Download the project and run
 ```
 python setup.py install
 ```
-
 and the project should be ready to run.
 
 <a name="usage"/>
@@ -127,5 +125,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## Credits and references
 
 - This project was inspired by [`fake-factory`](https://github.com/joke2k/faker)
-- The base name/nouns/adjectives/adverbs lists 
+- The base name/nouns/adjectives/adverbs lists were produced by [`RandomLists.com`](<https://www.randomlists.com/>)
 
