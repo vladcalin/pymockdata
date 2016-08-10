@@ -118,6 +118,7 @@ class DataModel:
         """
         self._fields = fields
         self._mock_data_generator = _DataGenerator(seed=seed)
+        self._extra_generators = []
 
     def generate_one(self):
         """
@@ -130,6 +131,9 @@ class DataModel:
         return entry
 
     def _resolve_field(self, field_value):
+        for extra_generator in self._extra_generators:
+            if extra_generator.ID == field_value:
+                return extra_generator.generate()
         return getattr(self._mock_data_generator, field_value)()
 
     def generate_batch(self, count):
@@ -149,17 +153,40 @@ class DataModel:
         """
         return self._resolve_field(field)
 
+    def register_generator(self, generator):
+        if not issubclass(generator, BaseGenerator):
+            raise TypeError(
+                "Expected parameter of type BaseGenerator but got {} instead".format(type(generator).__name__))
+        if inspect.isclass(generator):
+            generator = generator()
+        self._extra_generators.append(generator)
+
 
 if __name__ == '__main__':
-    data_model = DataModel(
-        name=DataModel.full_name,
-        email=DataModel.email,
-        ip=DataModel.ipv4_addr,
-        mac=DataModel.mac_addr,
-    )
+    # data_model = DataModel(
+    #     name=DataModel.full_name,
+    #     email=DataModel.email,
+    #     ip=DataModel.ipv4_addr,
+    #     mac=DataModel.mac_addr,
+    # )
+    #
+    # # print(data_model.generate_batch(10))
+    #
+    # print(data_model.value_for(DataModel.md5))
+    # print(data_model.value_for(DataModel.md5))
+    # print(data_model.value_for(DataModel.md5))
 
-    # print(data_model.generate_batch(10))
+    from pymockdata.core.template import Template, Token
 
-    print(data_model.value_for(DataModel.md5))
-    print(data_model.value_for(DataModel.md5))
-    print(data_model.value_for(DataModel.md5))
+    data_model = DataModel()
+
+    class MyGenerator(BaseGenerator):
+
+        ID = "my_first_generator"
+        _templates = [
+            Template(Token.Repeat(Token.SYMBOL, repeat=25))
+        ]
+
+    data_model.register_generator(MyGenerator)
+
+    print(data_model.value_for("my_first_generator"))

@@ -6,6 +6,11 @@
 Welcome to pymockdata's documentation!
 ======================================
 
+The **pymockdata** is a mock value generation framework with bug plans for the future. It was developed for fun, it is
+maintained for fun and its usage surely is fun.
+
+The code is available `on Github <https://github.com/vladcalin/pymockdata>`_.
+
 Contents:
 
 .. toctree::

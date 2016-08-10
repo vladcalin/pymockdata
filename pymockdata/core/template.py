@@ -346,11 +346,11 @@ class Template:
 
 if __name__ == '__main__':
     t = Template(
-        Token.SetInternalVariable("base_name", Token.Generator('full_name')),
-        Token.SetInternalVariable("base_domain", Token.Generator('domain')),
-        Token.GetInternalVariable("base_name", lambda x: x),
-        Token.Literal(" ; "),
-        Token.GetInternalVariable(["base_name", "base_domain"], lambda x, y: re.sub("[ -.]", "", x).lower() + "@" + y),
+        Token.Generator("domain"),
+        Token.SPACE,
+        Token.Literal("has "),
+        Token.NumberInverval(0, 2000),
+        Token.Literal(" visits every day")
     )
 
     print(t.render())

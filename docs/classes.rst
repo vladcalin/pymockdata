@@ -33,23 +33,26 @@ Classes
 
         :param field: must be one of the constants defined in this class.
 
-    .. py:method:: register_template(self, identifier, template)
+    .. py:method:: register_generator(self, generator)
 
-        Registers a template that can be used afterwards to generate mock values. See :doc:`advanced_usage`
-        for more information about templates.
+        Registers a generator that can be used afterwards to generate mock values. See :doc:`advanced_usage`
+        for more information about this topic.
 
-        After regstering, the template can be used to generate data by calling::
+        After regstering, the generator can be used to generate data by calling::
 
             data_model.value_for(identifier)
-            # or
-            DataModel(
-                ...
-                field=identifier,
-                ...
-            ).generate_one()
 
-        :param identifier: a string that designates the identifier of the template
-        :param template: a :py:class:`Template` instance.
+        .. note::
+
+                This method adds the generator only in the :py:class:`DataModel` instance that calls this method. If you need
+                to generate entries with the custom generator, you have to define the data model first with the custom field and
+                after that to register the generator::
+
+                        data_model = DataModel(my_field="my_generator_id")
+                        data_model.register_generator(my_generator)
+
+                        # now it is safe to generate stuff
+
 
 
 
@@ -236,7 +239,7 @@ Classes
             This token will not render in the final result. Its rendering only affects the internal state of the template.
 
         :param identifier: a string representing the internal variable ID through which it will be referenced later.
-        :param token: a :py:class:`Token: instance.
+        :param token: a :py:class:`Token` instance.
 
     .. py:method:: GetInternalVariable(identifiers, template)
 
@@ -247,5 +250,42 @@ Classes
 
         This token will render to the result of the *template* function applied on the designated internal variables.
 
+
+.. py:class:: Template(*tokens)
+
+    :param tokens: a list of tokens that will be parsed in order to generate a mock value.
+
+    .. py:method:: render(seed=None)
+
+        Renders the tokens into the final result. Returns a string.
+
+.. py:class:: BaseGenerator
+
+    The base class for all generators.
+
+    :module: pymockdata.core.base
+
+    .. py:attribute:: ID
+
+        **Abstract attribute**
+
+        The identifier of the generator.
+
+    .. py:attribute:: _templates
+
+        **Abstract attribute**
+
+        A list of :py:class:`Template` instances.
+
+    .. py:method:: on_finish(self, result_string)
+
+        This method is called after the rendering of a template is completed and *result_string* is result.
+
+        Must return a string and can be overwritten in sublcasses, although it is not mandatory. By default, returns
+        *result_string*.
+
+    .. py:method:: generate(self, seed=None)
+
+        Chooses a random template and renders it. Returns the final result after calling :py:func:`on_finish` on the result.
 
 

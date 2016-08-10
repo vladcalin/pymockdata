@@ -7,7 +7,7 @@ class BaseGenerator(abc.ABC):
     def _templates(self):
         pass
 
-    def process_result(self, result_string):
+    def on_finish(self, result_string):
         return result_string
 
     @abc.abstractproperty
@@ -22,5 +22,5 @@ class BaseGenerator(abc.ABC):
         else:
             to_return = template.render()
 
-        return self.process_result(to_return)
+        return self.on_finish(to_return)
 

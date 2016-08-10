@@ -11,12 +11,11 @@ setup(
     url="https://github.com/vladcalin/pymockdata",
     packages=["pymockdata"],
     entry_points={
-        "console_scripts": [
-            "pymockdata = pymockdata.cli:main"
-        ]
+        # "console_scripts": [
+        #     "pymockdata = pymockdata.cli:main"
+        # ]
     },
     test_suite="tests",
     install_requires=[
-        "click>=5.0.0"
     ]
 )

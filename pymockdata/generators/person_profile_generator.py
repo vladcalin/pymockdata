@@ -26,7 +26,7 @@ class PersonProfile(BaseGenerator):
         )
     ]
 
-    def process_result(self, result_string):
+    def on_finish(self, result_string):
         items = result_string.split("#")
 
         return {
@@ -36,5 +36,20 @@ class PersonProfile(BaseGenerator):
         }
 
 
+class SomeWeirdNameGenerator(BaseGenerator):
+    ID = "weird_name"
+    _templates = [
+        Template(
+            Token.Generator("full_name")
+        )
+    ]
+
+    def on_finish(self, result_string):
+        chars = {"a": "4", "e": "3", "t": "7", "i": "1", "o": "0"}
+        for char in chars:
+            result_string = result_string.replace(char, chars[char])
+        return result_string.upper()
+
+
 if __name__ == "__main__":
-    print(PersonProfile().generate())
+    print(SomeWeirdNameGenerator().generate())
