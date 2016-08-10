@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 import string
 
-from pymockdata.core.template import Token, Template
+from pymockdata.core.template import Token, Template, TokenParsingError
 import pymockdata.data as datasets
 
 
@@ -117,6 +117,12 @@ class TemplateUnitTests(TestCase):
         for i in range(250):
             self.assertIn(t.render(seed=i), datasets.nouns)
 
+        t = Template(
+            Token.DatasetValue("not_existing")
+        )
+        with self.assertRaises(TokenParsingError):
+            t.render()
+
     def test_token_number_interval(self):
         MIN = 10
         MAX = 20
@@ -155,6 +161,12 @@ class TemplateUnitTests(TestCase):
         self.assertEqual(t.render(), TO_RETURN)
         func_to_call.assert_called_once_with(*ARGS, **KWARGS)
 
+        t = Template(
+            Token.Custom(func_to_call)
+        )
+        self.assertEqual(t.render(), TO_RETURN)
+        func_to_call.assert_called_with()
+
     def test_token_special_repeat(self):
         STR = "repeat_me;"
         t = Template(
@@ -176,6 +188,68 @@ class TemplateUnitTests(TestCase):
         )
         self.assertEqual(t.render(), STR_FINAL)
 
+    def test_token_special_generator(self):
+        t = Template(
+            Token.Generator("noun")
+        )
+        self.assertIn(t.render(), datasets.nouns)
 
+    def test_token_special_generator_rising(self):
+        with self.assertRaises(TokenParsingError):
+            t = Template(
+                Token.Generator("does_not_exist")
+            )
+            t.render()
+
+    def test_token_special_choice(self):
+        t = Template(
+            Token.Choice(Token.Literal("a"), Token.Literal("b"), Token.Literal("c"))
+        )
+        value = t.render()
+        self.assertIn(value, "abc")
+        self.assertEqual(len(value), 1)
+
+        t = Template(
+            Token.Choice(Token.Literal("a"), Token.Literal("b"), Token.Literal("c"), count=2)
+        )
+        self.assertEqual(len(t.render()), 2)
+
+        t = Template(
+            Token.Choice(Token.Literal("a"), Token.Literal("b"), Token.Literal("c"), count_range=(1, 3))
+        )
+        self.assertTrue(1 <= len(t.render()) <= 3)
+
+    def test_token_special_internal_variables(self):
+        # one internal variable
+        t = Template(
+            Token.SetInternalVariable("a", Token.Literal("hello world")),
+            Token.GetInternalVariable("a", lambda x: x.upper())
+        )
+        self.assertEqual(t.render(), "HELLO WORLD")
+
+        # multiple variables
+        t = Template(
+            Token.SetInternalVariable("a", Token.Literal("hello ")),
+            Token.SetInternalVariable("b", Token.Literal("world")),
+            Token.GetInternalVariable("a", lambda x: x.strip()),
+            Token.GetInternalVariable("b", lambda x: x.upper())
+        )
+        self.assertEqual(t.render(), "helloWORLD")
+
+        # test overwriting
+        t = Template(
+            Token.SetInternalVariable("a", Token.Literal("initial")),
+            Token.SetInternalVariable("a", Token.Literal("final")),
+            Token.GetInternalVariable("a")
+        )
+        self.assertEqual(t.render(), "final")
+
+        # test bad identifier
+        t = Template(
+            Token.SetInternalVariable("a", Token.Literal("test")),
+            Token.GetInternalVariable("b")
+        )
+        with self.assertRaises(TokenParsingError):
+            t.render()
 
 

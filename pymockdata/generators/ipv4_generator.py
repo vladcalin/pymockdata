@@ -19,5 +19,3 @@ class Ipv4AddressGenerator(BaseGenerator):
     ]
 
 
-if __name__ == '__main__':
-    print(Ipv4AddressGenerator().generate())

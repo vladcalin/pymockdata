@@ -10,6 +10,18 @@ class TokenParsingError(Exception):
     pass
 
 
+class _TokenIds:
+    TOKEN_ID_DIGIT = 0
+    TOKEN_ID_LETTER = 1
+    TOKEN_ID_DOT = 2
+    TOKEN_ID_SYMBOL = 3
+    TOKEN_ID_FIELD = 4
+    TOKEN_ID_INTERVAL = 5
+    TOKEN_ID_LITERAL = 6
+    TOKEN_ID_SPACE = 7
+    TOKEN_ID_CUSTOM = 8
+
+
 class Token:
     """This class contains token identifiers that compose a valid template object.
 
@@ -27,61 +39,51 @@ class Token:
     NUMBER_INTERVAL(min, max)   : generates a random number in the [min, max] interval in decimal representation
     LITERAL(string): generates a string literal. Basically, copies the string parameter into the output.
     """
-    _TOKEN_ID_DIGIT = 0
-    _TOKEN_ID_LETTER = 1
-    _TOKEN_ID_DOT = 2
-    _TOKEN_ID_SYMBOL = 3
-    _TOKEN_ID_FIELD = 4
-    _TOKEN_ID_INTERVAL = 5
-    _TOKEN_ID_LITERAL = 6
-    _TOKEN_ID_SPACE = 7
-    _TOKEN_ID_CUSTOM = 8
-
     """Renders to a random digit"""
-    DIGIT = (_TOKEN_ID_DIGIT, None)
+    DIGIT = (_TokenIds.TOKEN_ID_DIGIT, None)
 
     """Renders to a lowercase ascii letter"""
-    LETTER_LOWER = (_TOKEN_ID_LETTER, "lower")
+    LETTER_LOWER = (_TokenIds.TOKEN_ID_LETTER, "lower")
 
     """Renders to a upper case ascii letter"""
-    LETTER_UPPER = (_TOKEN_ID_LETTER, "upper")
+    LETTER_UPPER = (_TokenIds.TOKEN_ID_LETTER, "upper")
 
     """Renders to a ascii letter"""
-    LETTER = (_TOKEN_ID_LETTER, None)
+    LETTER = (_TokenIds.TOKEN_ID_LETTER, None)
 
     """Render to '.'"""
-    DOT = (_TOKEN_ID_DOT, None)
+    DOT = (_TokenIds.TOKEN_ID_DOT, None)
 
     """Renders to a random symbol from string.punctuation"""
-    SYMBOL = (_TOKEN_ID_SYMBOL, None)
+    SYMBOL = (_TokenIds.TOKEN_ID_SYMBOL, None)
 
     """Renders to ' '"""
-    SPACE = (_TOKEN_ID_SPACE, None)
+    SPACE = (_TokenIds.TOKEN_ID_SPACE, None)
 
     @classmethod
     def DatasetValue(cls, field_name):
         """Renders to a random item from the designated dataset"""
-        return cls._TOKEN_ID_FIELD, field_name
+        return _TokenIds.TOKEN_ID_FIELD, field_name
 
     @classmethod
     def NumberInverval(cls, min, max):
         """Renders to a random number from [min, max] interval, in decimal representation"""
-        return cls._TOKEN_ID_INTERVAL, (min, max)
+        return _TokenIds.TOKEN_ID_INTERVAL, (min, max)
 
     @classmethod
     def Literal(cls, str_literal):
         """Renders to the string literal passed as parameter"""
-        return cls._TOKEN_ID_LITERAL, str_literal
+        return _TokenIds.TOKEN_ID_LITERAL, str_literal
 
     @classmethod
     def RandomSymbol(cls, symbol_set):
         """Renders to a random character from the string passed as parameter"""
-        return cls._TOKEN_ID_SYMBOL, symbol_set
+        return _TokenIds.TOKEN_ID_SYMBOL, symbol_set
 
     @classmethod
     def Custom(cls, custom_func, args=None, kwargs=None):
         """Is rendered as the result of `custom_func(*args, **kwargs)`. `custom_func` must return a string"""
-        return cls._TOKEN_ID_CUSTOM, (custom_func, args, kwargs)
+        return _TokenIds.TOKEN_ID_CUSTOM, (custom_func, args, kwargs)
 
     class Repeat:
         """
@@ -332,25 +334,13 @@ class Template:
         return func(*args, **kwargs)
 
     _token_resolvers = {
-        Token._TOKEN_ID_DIGIT: _token_digit_resolver,
-        Token._TOKEN_ID_LETTER: _token_letter_resolver,
-        Token._TOKEN_ID_DOT: _token_point_resolver,
-        Token._TOKEN_ID_SYMBOL: _token_symbol_resolver,
-        Token._TOKEN_ID_FIELD: _token_field_resolver,
-        Token._TOKEN_ID_INTERVAL: _token_interval_resolver,
-        Token._TOKEN_ID_LITERAL: _token_literal_resolver,
-        Token._TOKEN_ID_SPACE: _token_space_resolver,
-        Token._TOKEN_ID_CUSTOM: _token_custom_resolver,
+        _TokenIds.TOKEN_ID_DIGIT: _token_digit_resolver,
+        _TokenIds.TOKEN_ID_LETTER: _token_letter_resolver,
+        _TokenIds.TOKEN_ID_DOT: _token_point_resolver,
+        _TokenIds.TOKEN_ID_SYMBOL: _token_symbol_resolver,
+        _TokenIds.TOKEN_ID_FIELD: _token_field_resolver,
+        _TokenIds.TOKEN_ID_INTERVAL: _token_interval_resolver,
+        _TokenIds.TOKEN_ID_LITERAL: _token_literal_resolver,
+        _TokenIds.TOKEN_ID_SPACE: _token_space_resolver,
+        _TokenIds.TOKEN_ID_CUSTOM: _token_custom_resolver,
     }
-
-
-if __name__ == '__main__':
-    t = Template(
-        Token.Generator("domain"),
-        Token.SPACE,
-        Token.Literal("has "),
-        Token.NumberInverval(0, 2000),
-        Token.Literal(" visits every day")
-    )
-
-    print(t.render())

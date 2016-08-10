@@ -12,5 +12,3 @@ class Md5Generator(BaseGenerator):
     ]
 
 
-if __name__ == "__main__":
-    print(Md5Generator().generate())

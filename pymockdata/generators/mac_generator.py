@@ -18,5 +18,3 @@ class MacAddressGenerator(BaseGenerator):
     ]
 
 
-if __name__ == '__main__':
-    print(MacAddressGenerator().generate())

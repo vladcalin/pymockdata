@@ -28,5 +28,3 @@ class ProfessionalUsernameGenerator(BaseGenerator):
         )
     ]
 
-if __name__ == '__main__':
-    print(ProfessionalUsernameGenerator().generate())

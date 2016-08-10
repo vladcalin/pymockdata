@@ -11,5 +11,3 @@ class NounGenerator(BaseGenerator):
         )
     ]
 
-if __name__ == '__main__':
-    print(NounGenerator().generate())

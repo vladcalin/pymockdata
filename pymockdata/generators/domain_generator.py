@@ -21,5 +21,3 @@ class DomainGenerator(BaseGenerator):
     ]
 
 
-if __name__ == '__main__':
-    print(DomainGenerator().generate())

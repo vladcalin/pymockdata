@@ -24,5 +24,3 @@ class MaleNameGenerator(BaseGenerator):
         )
     ]
 
-if __name__ == '__main__':
-    print(MaleNameGenerator().generate())

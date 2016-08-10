@@ -12,5 +12,3 @@ class AdjectiveGenerator(BaseGenerator):
         )
     ]
 
-if __name__ == '__main__':
-    print(AdjectiveGenerator().generate())

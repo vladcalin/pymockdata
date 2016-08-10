@@ -19,5 +19,3 @@ class Ipv6AddressGenerator(BaseGenerator):
     ]
 
 
-if __name__ == '__main__':
-    print(Ipv6AddressGenerator().generate())

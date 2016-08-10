@@ -11,5 +11,3 @@ class TldGenerator(BaseGenerator):
         )
     ]
 
-if __name__ == '__main__':
-    print(TldGenerator().generate())

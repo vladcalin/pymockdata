@@ -163,30 +163,4 @@ class DataModel:
 
 
 if __name__ == '__main__':
-    # data_model = DataModel(
-    #     name=DataModel.full_name,
-    #     email=DataModel.email,
-    #     ip=DataModel.ipv4_addr,
-    #     mac=DataModel.mac_addr,
-    # )
-    #
-    # # print(data_model.generate_batch(10))
-    #
-    # print(data_model.value_for(DataModel.md5))
-    # print(data_model.value_for(DataModel.md5))
-    # print(data_model.value_for(DataModel.md5))
-
-    from pymockdata.core.template import Template, Token
-
-    data_model = DataModel()
-
-    class MyGenerator(BaseGenerator):
-
-        ID = "my_first_generator"
-        _templates = [
-            Template(Token.Repeat(Token.SYMBOL, repeat=25))
-        ]
-
-    data_model.register_generator(MyGenerator)
-
-    print(data_model.value_for("my_first_generator"))
+    pass
