@@ -3,6 +3,7 @@ from .nouns import nouns
 from .adjectives import adjectives
 from .adverbs import adverbs
 from .internet import tld
+from .file import file_extensions
 
 
 __doc__ = """Contains all the datasets used by the templates for rendering
@@ -26,3 +27,6 @@ ADVERBS = "adverbs"
 
 # internet
 TLD = "tld"
+
+
+FILE_EXTENSIONS = "file_extensions"

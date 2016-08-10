@@ -3,7 +3,7 @@ Classes
 
 
 .. py:class:: DataModel(**fields)
-DataModel(seed, **fields)
+              DataModel(seed, **fields)
 
     The ``fields`` must be pairs of key-type that will specify how the generated entries will look like.
 
@@ -14,12 +14,47 @@ DataModel(seed, **fields)
 
         Generates one mock entry as a :py:class:`dict`. The keys this entry will have will match the ``fields`` keys.
 
+        If the data model is defined as ``DataModel(field1=..., fiedl2=..., field3=...)``, then this method will return a
+        :py:class:`dict` instance like this::
+
+            {
+                "field1": ...,
+                "field2": ...,
+                "field3": ...
+            }
+
     .. py:method:: generate_batch(self, count)
 
         Generates a list of *count* entries (see :py:func:`generate_one` for more information about the structure of the entries)
 
+    .. py:method:: value_for(self, field)
 
-.. _defined_field_types:
+        Generates one mock value for the specified field.
+
+        :param field: must be one of the constants defined in this class.
+
+    .. py:method:: register_template(self, identifier, template)
+
+        Registers a template that can be used afterwards to generate mock values. See :doc:`advanced_usage`
+        for more information about templates.
+
+        After regstering, the template can be used to generate data by calling::
+
+            data_model.value_for(identifier)
+            # or
+            DataModel(
+                ...
+                field=identifier,
+                ...
+            ).generate_one()
+
+        :param identifier: a string that designates the identifier of the template
+        :param template: a :py:class:`Template` instance.
+
+
+
+
+    .. _defined_field_types:
 
     .. py:attribute:: female_name
 
@@ -59,7 +94,7 @@ DataModel(seed, **fields)
 
         Generates an email address.
 
-        Examples: *mmoran@fuel.biz*, *mblake@swim.es, *ellishardy@flimsy.jp*, *alexandra_shaniatodd@waterjoyously.net*
+        Examples: *mmoran@fuel.biz*, *mblake@swim.es*, *ellishardy@flimsy.jp*, *alexandra_shaniatodd@waterjoyously.net*
 
     .. py:attribute:: domain
 
@@ -103,25 +138,114 @@ DataModel(seed, **fields)
 
         Examples: *81:29:66:aa:10:25*, *65:1d:73:80:3f:42*, *84:cc:a2:b0:ee:cb*
 
+    .. py:attribute:: md5
 
-.. py:class:: DataGenerator(seed=None)
+        Generates an hex representation of an MD5 hash.
 
-    This class is used for generating a single mock instance. See :ref:`defined_field_types` for the supported fields.
+        Examples: *68b35de195413767c1700ac383265f4e*, *7bcb4e8b774aeefe67d0e1f6a8845bf4*, *f005d9fb0871507700382ab4c0a45477*
 
-    If the *seed* parameter is provided, that value will be used as the random seed.
+    .. py:attribute:: file_extension
 
-    Example usage::
+        Generates a file extension
 
-        DataGenerator().full_name()
-        # Rowan Lincoln Case
+        Examples: *.png*, *.xml*, *.cpp*
 
-        DataGenerator().mac_addr()
-        # 65:1d:73:80:3f:42
 
-    .. note::
+.. py:class:: Token
 
-            If the DataModel has an constant defined, the :py:class:`DataGenerator` class exposes a corresponding callable
-            that is used to generate one instance of mock data of that type. For example, if :py:class:`DataModel` has defined
-            the attribute :py:attr:`DataModel.full_name`, the :py:func:`DataGenerator.full_name()` will generate one value of that kind.
+    Represents a token instance in the template that will be resolved to a string.
+
+    .. py:attribute:: DIGIT
+
+        Renders to a decimal digit.
+
+    .. py:attribute:: LETTER_LOWER
+
+        Renders to a lowercase ascii letter.
+
+    .. py:attribute:: LETTER_UPPER
+
+        Renders to an uppercase ascii letter.
+
+    .. py:attribute:: LETTER
+
+        Renders to an ascii letter.
+
+    .. py:attribute:: DOT
+
+        Renders to ``"."``.
+
+    .. py:attribute:: SYMBOL
+
+        Renders to a random character from ``"!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~"``.
+
+    .. py:attribute:: SPACE
+
+        Renders to ``" "``.
+
+    .. py:method:: DatasetValue(field_name)
+
+        Renders to a random value from the ``field_name`` dataset. If no suitable dataset is found, will raise an exception.
+
+    .. py:method:: NumberInterval(min, max)
+
+        Renders to a random decimal representation of a number in the interval ``[min, max]``
+
+    .. py:method:: Literal(str_literal)
+
+        Renders to ``str_literal``.
+
+    .. py:method:: RandomSymbol(symbol_set)
+
+        Renders to a random character from *symbol_set*.
+
+    .. py:method:: Custom(func, args=None, kwargs=None)
+
+        Calls *func* with arguments ``*args`` and ``**kwargs`` and renders to its response. *func* must be a callable that
+        returns a string.
+
+    .. py:method:: Repeat(token, repeat=1, random_repeat=None)
+
+        Causes *token* to be rendered multiple times, specifically *repeat* times if random_repeat is not specified. If
+        *random_repeat* is specified, it must be an :py:class:`tuple(int, int)`
+
+    .. py:method:: Generator(generator_id)
+
+        Calls another generator and render to its generated value.
+
+    .. py:method:: Transform(token, template)
+
+        Renders the *token* token and applies *template* on the result.
+
+    .. py:method:: Choice(*tokens, count=None, count_range=None)
+
+        Randomly choose a number of tokens from *tokens* to render (also their order is random).
+
+        :param tokens: The set of tokens from where to choose.
+        :param count: The number of tokens to be chosen from *tokens*. Can be greater than ``len(tokens)``.
+        :param count_range: a tuple of two positive integers. If present, there will be chosem ``random.randint(count_range[0], count_range[1])`` tokens from *tokens*.
+
+    .. py:method:: SetInternalVariable(identifier, token)
+
+        Sets an internal variable inside the template that can be referenced afterwards by :py:func:`Token.GetInternalVariable`.
+
+        If another internal variable with the id *identifier* was previously set, it will be overwritten.
+
+        .. note::
+
+            This token will not render in the final result. Its rendering only affects the internal state of the template.
+
+        :param identifier: a string representing the internal variable ID through which it will be referenced later.
+        :param token: a :py:class:`Token: instance.
+
+    .. py:method:: GetInternalVariable(identifiers, template)
+
+        Manipulates the internal variables previously set in the template.
+
+        If *identifiers* is a string, *template* must be a callable which takes a single argument.
+        If *identifiers* is a list of strings, *template* must be a callable which takes ``len(identifiers)`` parameters.
+
+        This token will render to the result of the *template* function applied on the designated internal variables.
+
 
 

@@ -14,10 +14,7 @@ General workflow
 ----------------
 
 
-Basically, there are two ways to generate mock data:
-
-1. By using a :py:class:`DataModel` instance.
-2. By using a :py:class:`DataGenerator` instance.
+Basically in order to generate data, you have to define your data model and then generate data using it. See how in :doc:`usage`.
 
 Generated value types
 ---------------------
@@ -43,6 +40,9 @@ Currently, the following types of values can be generated:
 - ``ipv4_addr``
 - ``ipv6_addr``
 - ``mac_addr``
+
+- ``md5``
+- ``file_extension``
 
 
 See :ref:`supported field types <defined_field_types>` for a detailed description of each field and how to use them.

@@ -9,7 +9,7 @@ generate the entries, will call the right generators in order to produce the des
 .. note::
 
     Use the defined constants in the :py:func:`DataModel` class to avoid typos and to be future proof.
-    For more information, see :ref:`defined_field_types`.
+    For more information, see :ref:`supported field types <defined_field_types>`.
 
 A basic example of :py:func:`DataModel` is::
 
@@ -22,15 +22,9 @@ A basic example of :py:func:`DataModel` is::
 
 After that, you can generate instances manually by calling :py:func:`DataModel.generate_one` or :py:func:`DataModel.generate_batch`.
 
+An alternative for generating a single value of a kind, is by using the :py:func:`DataModel.value_for` method::
 
-Another way to generate data is by using a :py:class:`DataGenerator` instance.
-
-Example::
-
-    DataGenerator().full_name()
-    # Reyna-Kayleigh Wright
-
-    DataGenerator().ipv4_addr()
-    # 172.88.101.81
+    DataModel().value_for(DataModel.domain)
+    # lightning.org
 
 Enjoy :)

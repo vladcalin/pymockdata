@@ -36,7 +36,7 @@ def _get_generator(generator_id):
         return None
 
 
-class DataGenerator:
+class _DataGenerator:
     def __init__(self, seed=None):
         self._seed = seed
 
@@ -53,7 +53,7 @@ class DataGenerator:
 
         if gen:
             return GeneratorWrapper(gen[0](), self._seed)
-        return super(DataGenerator, self).__getattribute__(item)
+        return super(_DataGenerator, self).__getattribute__(item)
 
 
 class DataModel:
@@ -107,6 +107,9 @@ class DataModel:
     ipv6_addr = "ipv6_addr"
     mac_addr = "mac_addr"
 
+    md5 = "md5"
+    file_extension = "file_extension"
+
     def __init__(self, seed=None, **fields):
         """
         Defines the model for the generated entries
@@ -114,7 +117,7 @@ class DataModel:
         :param fields: the fields of the data model. Each field value must be one of the constants defined in this class
         """
         self._fields = fields
-        self._mock_data_generator = DataGenerator(seed=seed)
+        self._mock_data_generator = _DataGenerator(seed=seed)
 
     def generate_one(self):
         """
@@ -157,4 +160,6 @@ if __name__ == '__main__':
 
     # print(data_model.generate_batch(10))
 
-    print(DataGenerator().full_name())
+    print(data_model.value_for(DataModel.md5))
+    print(data_model.value_for(DataModel.md5))
+    print(data_model.value_for(DataModel.md5))

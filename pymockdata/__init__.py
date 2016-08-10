@@ -1,1 +1,1 @@
-from pymockdata.core.engine import DataModel, DataGenerator
+from pymockdata.core.engine import DataModel, _DataGenerator
