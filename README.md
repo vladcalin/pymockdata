@@ -11,9 +11,6 @@ A Python library for generating mock data and exporting it in various formats.
 2. [Description](#description)
 3. [Installation](#installation)
 4. [Usage](#usage)
-    1. [The DataModel class](#data_model_class)
-    2. [The DataFactory class and exporters](#data_factory_class)
-	
 5. [Contributing](#contributing)
 6. [Credits and references](#credits)
 
@@ -45,9 +42,6 @@ and the project should be ready to run.
 <a name="usage"/>
 ## Simple usage
 
-There are various methods to generate mock data. 
-
-<a name="data_model_class"/>
 ### The DataModel class
 The simpliest method is by using a DataModel instance:
 
@@ -82,6 +76,8 @@ The simpliest method is by using a DataModel instance:
 	# }
 	# ...
 	# ]
+	# or generate a single instance
+	data_model.value_for(DataModel.forum_username)
 ```
 
 The `DataModel` class exposes constants that should be used as field type in the constructor. The supported constants so far are:
@@ -101,19 +97,6 @@ The `DataModel` class exposes constants that should be used as field type in the
 - ipv4_addr
 - ipv6_addr
 - mac_addr
- 
-<a name="data_generator_class"/>
-### The DataGenerator class
-
-This class can be used for generating a single instance of some type.
-
-Example:
-```python
-
-DataGenerator.full_name()
-# Aden-Michael F. Hester
-DataGenerator.ipv4_addr()
-# 172.88.101.81
 ```
 
 <a name="contributing"/>
