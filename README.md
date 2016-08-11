@@ -97,7 +97,6 @@ The `DataModel` class exposes constants that should be used as field type in the
 - ipv4_addr
 - ipv6_addr
 - mac_addr
-```
 
 <a name="contributing"/>
 ## Contributing
