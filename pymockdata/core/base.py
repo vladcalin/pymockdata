@@ -1,8 +1,13 @@
+import os
 from random import Random
+import importlib
+from collections import namedtuple
+
+import pymockdata.datasets
+from pymockdata.core.constants import Localisation
 
 
 class Generator:
-
     def __init__(self, name, template, localisation, *args, **kwargs):
         self.name = name
         self.localisation = localisation
@@ -22,16 +27,3 @@ class Generator:
     def generate_one(self):
         return self.template.render(*self.args, **self.kwargs)
 
-
-class Dataset:
-
-    def __init__(self, name, localisation, random=None):
-        self.name = name
-        self.localisation = localisation
-        self.random = None
-
-    def get_one(self):
-        pass
-
-    def get_many(self, many):
-        pass

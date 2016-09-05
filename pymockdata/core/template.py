@@ -1,8 +1,12 @@
+from pymockdata.core.constants import Localisation
+
+
 class Template:
-    def __init__(self, template_func, localisation=None):
+    def __init__(self, template_func, localisation=Localisation.en_US, template_list=None):
         self.template_func = template_func
         self.localisation = localisation
         self.random = None
+        self.template_list = template_list
 
     def set_random(self, random):
         self.random = random
