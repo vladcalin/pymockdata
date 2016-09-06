@@ -1,5 +1,5 @@
 # pymockdata 
-[![Build Status](https://travis-ci.org/vladcalin/py-mock-data-generator.svg?branch=master)](https://travis-ci.org/vladcalin/py-mock-data-generator)
+[![Build Status](https://travis-ci.org/vladcalin/pymockdata.svg?branch=master)](https://travis-ci.org/vladcalin/pymockdata)
 [![Coverage Status](https://coveralls.io/repos/github/vladcalin/py-mock-data-generator/badge.svg?branch=master)](https://coveralls.io/github/vladcalin/py-mock-data-generator?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/pymockdata/badge/?version=latest)](http://pymockdata.readthedocs.io/en/latest/?badge=latest)
 
