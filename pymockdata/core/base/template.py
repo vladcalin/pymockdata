@@ -30,7 +30,6 @@ class Template(metaclass=abc.ABCMeta):
     def _parse_template(self, tokens):
         result = ""
         for x in tokens:
-            print(x)
             literal, field_name, _, _ = x
             result += literal
             result += self._resolve_dataset(field_name)
@@ -39,7 +38,9 @@ class Template(metaclass=abc.ABCMeta):
     def _resolve_dataset(self, field_name):
         return DatasetAccess(field_name, self.localisation, self.random).get_one()
 
-    def render(self):
+    def render(self, *args, **kwargs):
+        if args or kwargs:
+            raise ValueError("The default Template.render() method does not take any arguments")
         template, tokens = self._choose_template()
         result = self._parse_template(tokens)
         return self.on_result(result)

@@ -28,7 +28,7 @@ class DatasetAccess:
             for dataset_name in dir(module):
                 dataset = getattr(module, dataset_name)
                 if isinstance(dataset,
-                              tuple) and dataset.name == self.name and dataset.localisation == self.localisation:
+                              tuple) and dataset.name == self.name and (dataset.localisation == self.localisation or dataset.localisation is None):
                     return dataset
 
         raise ValueError(
