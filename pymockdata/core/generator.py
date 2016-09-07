@@ -4,6 +4,7 @@ import pymockdata.datasets
 from pymockdata.core.constants import Localisation
 from pymockdata.templates.names_templates import FullFemaleNameTemplate, FullMaleNameTemplate, FemaleNameTemplate, \
     MaleNameTemplate, FullNameTemplate
+from pymockdata.templates.internet_templates import Ipv4AddressTemplate, Ipv6AddressTemplate, MacAddressTemplate
 
 
 class Generator:
@@ -13,7 +14,11 @@ class Generator:
         "full_male_name": FullMaleNameTemplate,
         "full_female_name": FullFemaleNameTemplate,
         "full_name": FullNameTemplate,
-        "name": FullNameTemplate
+        "name": FullNameTemplate,
+
+        "ipv4": Ipv4AddressTemplate,
+        "ipv6": Ipv6AddressTemplate,
+        "mac": MacAddressTemplate
     }
 
     def __init__(self, random=None, localisation=Localisation.default):
@@ -41,4 +46,4 @@ class Generator:
 
 
 if __name__ == '__main__':
-    print(Generator(localisation=Localisation.ro_RO).name())
+    print(Generator().ipv4())

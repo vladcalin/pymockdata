@@ -19,10 +19,7 @@ class Template(metaclass=abc.ABCMeta):
         self._formats = [(x, list(Formatter().parse(x))) for x in self.pattern_list]
         self.localisation = localisation
 
-        if random:
-            self.random = random
-        else:
-            self.random = Random()
+        self.random = random or Random()
 
     def _choose_template(self):
         return self.random.choice(self._formats)
