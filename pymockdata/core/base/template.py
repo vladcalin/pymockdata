@@ -8,11 +8,10 @@ from pymockdata.datasets import DatasetAccess
 
 class Template(metaclass=abc.ABCMeta):
     """
-        Will expose a list of pattern lists.
+        The base class for templates. Valid templates must subclass this class and satisfy the following conditions:
 
-        A pattern is a string like
-
-            "{token_name} some static strings {token_name2}"
+        - define a :py:member:`pattern_list` attribute that will contain a list of string representing the templates.
+        When rendering, the template will render one randomly chosen template string.
     """
 
     def __init__(self, localisation=Localisation.default, random=None):
@@ -44,8 +43,17 @@ class Template(metaclass=abc.ABCMeta):
 
     @abc.abstractproperty
     def pattern_list(self):
+        """
+        Mandatory property of the subclasses.
+        """
         pass
 
-    @abc.abstractmethod
     def on_result(self, result_string):
-        pass
+        """
+
+        Optional method that cand be overriden by the subclases. Will be called on the rendered template string.
+
+        :param result_string: A string representing the rendered template string that was randomly chosen.
+        :return: An object representing the final rendering result.
+        """
+        return result_string
